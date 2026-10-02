@@ -37,7 +37,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   
-  <!-- FontAwesome for robust gamer & social icons -->
+  <!-- FontAwesome 6 for robust gamer & social icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
   <style>
@@ -82,35 +82,66 @@
       animation: livePingPulse 2s infinite ease-in-out;
     }
 
-    .glassmorphism {
-      background: rgba(24, 24, 27, 0.7);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+    /* Fixed/Sticky Phone Mockup styling */
+    .phone-simulator-shell {
+      width: 340px;
+      height: 680px;
+      max-height: calc(100vh - 120px);
+      border-radius: 42px;
+      border: 10px solid #1f1f23;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.08), 0 0 35px rgba(145, 70, 255, 0.15);
+      position: relative;
+      background: #09090b;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
     }
 
-    /* Device frame simulator */
-    .mobile-frame-wrap {
-      width: 380px;
-      max-width: 100%;
-      height: 780px;
-      border-radius: 40px;
-      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 0 8px #27272a;
-      overflow: hidden;
-      border: 4px solid #18181b;
-      position: relative;
-    }
-    
-    .mobile-notch {
-      width: 120px;
-      height: 20px;
-      background: #18181b;
+    .phone-dynamic-island {
       position: absolute;
-      top: 0;
+      top: 8px;
       left: 50%;
       transform: translateX(-50%);
-      border-bottom-left-radius: 12px;
-      border-bottom-right-radius: 12px;
-      z-index: 50;
+      width: 90px;
+      height: 18px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 8px;
+    }
+
+    .phone-dynamic-island::after {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #111e38;
+      border: 1px solid #1e3a8a;
+    }
+
+    .phone-status-bar {
+      height: 32px;
+      padding: 0 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 10px;
+      font-weight: 600;
+      color: #a1a1aa;
+      z-index: 30;
+      flex-shrink: 0;
+    }
+
+    .phone-screen-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 14px 20px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
   </style>
 </head>
@@ -118,7 +149,7 @@
 <body class="bg-[#0b0b0e] text-zinc-100 font-sans antialiased min-h-screen flex flex-col selection:bg-purple-600 selection:text-white">
 
   <!-- Top Global Navigation Bar -->
-  <header class="sticky top-0 z-50 bg-[#121215]/90 backdrop-blur-md border-b border-zinc-800/80 px-4 py-3 sm:px-6">
+  <header class="sticky top-0 z-50 bg-[#121215]/95 backdrop-blur-md border-b border-zinc-800/80 px-4 py-3 sm:px-6">
     <div class="max-w-7xl mx-auto flex items-center justify-between">
       <div class="flex items-center space-x-3">
         <span class="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-700 to-indigo-500 shadow-md shadow-purple-600/30 font-extrabold text-white text-lg">
@@ -128,7 +159,7 @@
           <h1 class="font-bold text-sm tracking-wide text-white flex items-center gap-2">
             oMarotto <span class="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800">Hub Pages</span>
           </h1>
-          <p class="text-xs text-zinc-400">Bio Linktree com Twitch Live Sync</p>
+          <p class="text-xs text-zinc-400">Bio Linktree com Twitch Live Sync & Painel Lateral</p>
         </div>
       </div>
 
@@ -225,249 +256,272 @@
       </div>
     </section>
 
-    <section id="sectionAdmin" class="w-full max-w-7xl hidden flex-col lg:flex-row gap-6 transition-all duration-300">
+    <!-- VIEW CONTAINER: Admin Dashboard with Side-by-Side Sticky Phone -->
+    <section id="sectionAdmin" class="w-full max-w-7xl hidden transition-all duration-300">
       
-      <!-- Left side: Live Interactive Phone Simulator (Desktop Preview) -->
-      <div class="w-full lg:w-[460px] flex flex-col items-center flex-shrink-0">
-        <div class="sticky top-20 flex flex-col items-center w-full">
-          <div class="flex items-center justify-between w-full max-w-[380px] px-2 mb-2">
-            <span class="text-xs font-semibold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
-              <i class="fa-solid fa-mobile-screen text-purple-400"></i> Prévia em Tempo Real
-            </span>
-            <span class="text-[11px] px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700">Mobile Mockup</span>
-          </div>
-
-          <!-- Virtual Phone Wrapper -->
-          <div class="mobile-frame-wrap bg-zinc-950 flex flex-col">
-            <div class="mobile-notch"></div>
-            <!-- Scaled container mirroring the actual public page -->
-            <div id="adminMiniPreview" class="w-full h-full overflow-y-auto px-5 py-8 flex flex-col items-center">
-              <!-- Content mirrored dynamically from public generator -->
-            </div>
-          </div>
-          <p class="text-[11px] text-zinc-500 mt-2 text-center">Toda alteração feita ao lado é refletida imediatamente.</p>
-        </div>
-      </div>
-
-      <!-- Right side: Settings & Configuration Controls -->
-      <div class="flex-1 bg-zinc-900/60 border border-zinc-800 rounded-3xl p-5 sm:p-8 backdrop-blur-sm space-y-8">
+      <!-- Side-by-Side Flex Container -->
+      <div class="flex flex-col lg:flex-row items-start gap-8 w-full">
         
-        <!-- Header config banner -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800 pb-5">
-          <div>
-            <h2 class="text-xl font-bold text-white flex items-center gap-2">
-              <i class="fa-solid fa-sliders text-purple-400"></i> Painel de Configurações
-            </h2>
-            <p class="text-xs text-zinc-400 mt-1">Configure o perfil, aparência visual e integração em tempo real com a Twitch.</p>
-          </div>
-          <div class="flex items-center gap-2">
-            <button onclick="salvarTudoManualmente()" class="px-4 py-2 rounded-xl text-xs font-bold bg-purple-600 hover:bg-purple-700 text-white transition flex items-center gap-1.5 shadow-lg shadow-purple-600/30">
-              <i class="fa-solid fa-floppy-disk"></i> Salvar Agora
-            </button>
-            <button onclick="restaurarPadrao()" class="px-3 py-2 rounded-xl text-xs font-medium bg-zinc-800 hover:bg-red-950/40 hover:text-red-300 text-zinc-400 border border-zinc-700 transition" title="Restaurar padrões">
-              <i class="fa-solid fa-rotate-left"></i>
-            </button>
-          </div>
-        </div>
-
-        <!-- Section 0: Twitch Live Auto-Detection -->
-        <div class="space-y-4 bg-purple-950/20 border border-purple-800/40 rounded-2xl p-4 sm:p-5">
-          <div class="flex items-center justify-between">
-            <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300 flex items-center gap-2">
-              <i class="fa-brands fa-twitch text-lg text-purple-400"></i> Detecção Automática de Live na Twitch
-            </h3>
-            <span id="twitchStatusIndicator" class="text-xs px-2.5 py-1 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700 flex items-center gap-1.5 font-medium">
-              <span class="w-2 h-2 rounded-full bg-zinc-500"></span> Verificando...
-            </span>
-          </div>
-          <p class="text-xs text-zinc-300 leading-relaxed">
-            A badge <strong>"🔴 AO VIVO"</strong> só é ativada se seu canal estiver transmitindo de verdade (usando consulta pública sem expor credenciais privadas). Se estiver offline, ela se oculta automaticamente.
-          </p>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
-            <div class="sm:col-span-2">
-              <label class="block text-xs font-medium text-zinc-300 mb-1">Nome de Usuário da Twitch (Canal)</label>
-              <div class="flex gap-2">
-                <span class="inline-flex items-center px-3 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-zinc-500">twitch.tv/</span>
-                <input type="text" id="cfgTwitchUsername" oninput="updateConfigField('twitchUsername', this.value.trim().toLowerCase())" class="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-purple-500 transition font-mono" placeholder="omarotto">
-              </div>
-            </div>
-            <div>
-              <label class="block text-xs font-medium text-zinc-300 mb-1">Checagem em Tempo Real</label>
-              <select id="cfgAutoDetectLive" onchange="updateConfigField('autoDetectLive', this.value === 'true')" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none">
-                <option value="true">Ativado (Automático)</option>
-                <option value="false">Desativado (Sempre Oculto)</option>
-              </select>
-            </div>
-          </div>
-          <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-purple-900/30 text-xs text-zinc-400">
-            <span id="twitchLastCheckedText">Aguardando verificação...</span>
-            <button onclick="verificarStatusTwitch(true)" class="px-2.5 py-1 rounded-lg bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 text-[11px] font-medium transition flex items-center gap-1">
-              <i class="fa-solid fa-arrows-rotate"></i> Testar Status Agora
-            </button>
-          </div>
-        </div>
-
-        <!-- Section A: Profile Data -->
-        <div class="space-y-4">
-          <h3 class="text-sm font-semibold uppercase tracking-wider text-purple-400 flex items-center gap-2">
-            <i class="fa-solid fa-user-astronaut"></i> Dados do Perfil
-          </h3>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-medium text-zinc-400 mb-1">Nome de Exibição</label>
-              <input type="text" id="cfgDisplayName" oninput="updateConfigField('displayName', this.value)" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500 transition" placeholder="Ex: oMarotto">
-            </div>
-            <div>
-              <label class="block text-xs font-medium text-zinc-400 mb-1">Nome de Usuário (@)</label>
-              <input type="text" id="cfgUsername" oninput="updateConfigField('username', this.value)" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500 transition" placeholder="Ex: @omarotto">
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-medium text-zinc-400 mb-1">Foto de Perfil (URL ou Arquivo)</label>
-              <div class="flex gap-2">
-                <input type="text" id="cfgAvatarUrl" oninput="updateConfigField('avatarUrl', this.value)" class="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-purple-500 transition" placeholder="https://exemplo.com/avatar.jpg">
-                <label class="cursor-pointer bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 px-3 py-2 rounded-xl text-xs flex items-center justify-center text-zinc-200 transition" title="Carregar do dispositivo">
-                  <i class="fa-solid fa-upload"></i>
-                  <input type="file" id="cfgAvatarFile" accept="image/*" class="hidden" onchange="tratarUploadAvatar(event)">
-                </label>
-              </div>
-            </div>
-            <div>
-              <label class="block text-xs font-medium text-zinc-400 mb-1">Texto da Badge quando Ao Vivo</label>
-              <input type="text" id="cfgStatusTag" oninput="updateConfigField('statusTag', this.value)" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-purple-500 transition" placeholder="🔴 AO VIVO NA TWITCH">
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-medium text-zinc-400 mb-1">Biografia / Descrição</label>
-            <textarea id="cfgBio" rows="2" oninput="updateConfigField('bio', this.value)" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-purple-500 transition" placeholder="Sua bio curta..."></textarea>
-          </div>
-        </div>
-
-        <!-- Section B: Style & Custom Appearance -->
-        <div class="space-y-4 border-t border-zinc-800 pt-6">
-          <h3 class="text-sm font-semibold uppercase tracking-wider text-purple-400 flex items-center gap-2">
-            <i class="fa-solid fa-palette"></i> Cores, Temas & Visual
-          </h3>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div>
-              <label class="block text-xs font-medium text-zinc-400 mb-1">Cor Primária (Destaque)</label>
-              <div class="flex items-center gap-2 bg-zinc-950 border border-zinc-800 rounded-xl p-1.5">
-                <input type="color" id="cfgPrimaryColor" oninput="updateConfigField('primaryColor', this.value)" class="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-0 p-0">
-                <span id="cfgPrimaryColorHex" class="text-xs font-mono text-zinc-400">#9146FF</span>
-              </div>
-            </div>
-            <div>
-              <label class="block text-xs font-medium text-zinc-400 mb-1">Fundo da Página</label>
-              <div class="flex items-center gap-2 bg-zinc-950 border border-zinc-800 rounded-xl p-1.5">
-                <input type="color" id="cfgBgColor" oninput="updateConfigField('bgColor', this.value)" class="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-0 p-0">
-                <span id="cfgBgColorHex" class="text-xs font-mono text-zinc-400">#0e0e10</span>
-              </div>
-            </div>
-            <div>
-              <label class="block text-xs font-medium text-zinc-400 mb-1">Formato dos Botões</label>
-              <select id="cfgButtonRadius" onchange="updateConfigField('buttonRadius', this.value)" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
-                <option value="rounded-2xl">Moderno (Suave)</option>
-                <option value="rounded-full">Pílula (Arredondado)</option>
-                <option value="rounded-lg">Compacto</option>
-                <option value="rounded-none">Reto / Retangular</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-medium text-zinc-400 mb-1">Estilo dos Botões</label>
-              <select id="cfgButtonStyle" onchange="updateConfigField('buttonStyle', this.value)" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
-                <option value="glass">Vidro Gamer (Glass)</option>
-                <option value="solid">Sólido Escuro</option>
-                <option value="outline">Apenas Borda (Outline)</option>
-                <option value="neon">Neon Brilhante</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <!-- Section C: Quick Social Bar Manager -->
-        <div class="space-y-4 border-t border-zinc-800 pt-6">
-          <div class="flex items-center justify-between">
-            <h3 class="text-sm font-semibold uppercase tracking-wider text-purple-400 flex items-center gap-2">
-              <i class="fa-solid fa-share-nodes"></i> Barra de Ícones Sociais
-            </h3>
-            <span class="text-xs text-zinc-400">Aparecem logo abaixo da biografia</span>
-          </div>
-          <div id="adminSocialsList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-            <!-- Dynamic Social Inputs -->
-          </div>
-        </div>
-
-        <!-- Section D: Links Manager (Add, reorder, delete, highlight) -->
-        <div class="space-y-4 border-t border-zinc-800 pt-6">
-          <div class="flex items-center justify-between">
-            <div>
-              <h3 class="text-sm font-semibold uppercase tracking-wider text-purple-400 flex items-center gap-2">
-                <i class="fa-solid fa-link"></i> Gerenciador de Links Principais
-              </h3>
-              <p class="text-xs text-zinc-400">Adicione botões, canais, lojas, campanhas e destaque com animações.</p>
-            </div>
-            <button onclick="adicionarNovoLink()" class="px-3 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition flex items-center gap-1.5 shadow-md shadow-emerald-700/30">
-              <i class="fa-solid fa-plus"></i> Novo Link
-            </button>
-          </div>
-
-          <!-- Links Container for Admin -->
-          <div id="adminLinksList" class="space-y-3.5">
-            <!-- Link cards with order, edit, toggle and remove -->
-          </div>
-        </div>
-
-        <!-- Section E: Export / GitHub Pages Synchronization -->
-        <div id="exportSection" class="space-y-4 border-t border-zinc-800 pt-6">
-          <h3 class="text-sm font-semibold uppercase tracking-wider text-purple-400 flex items-center gap-2">
-            <i class="fa-solid fa-cloud-arrow-down"></i> Publicação no GitHub Pages & Backup
-          </h3>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- LEFT COLUMN: Sticky Mobile Phone Mockup -->
+        <div class="w-full lg:w-[380px] flex-shrink-0 flex flex-col items-center">
+          <div class="sticky top-20 flex flex-col items-center w-full">
             
-            <!-- Export / Import JSON Box -->
-            <div class="bg-zinc-950 p-4 rounded-2xl border border-zinc-800 space-y-3">
-              <h4 class="text-xs font-bold text-zinc-300 uppercase tracking-wide flex items-center gap-1.5">
-                <i class="fa-solid fa-database text-purple-400"></i> Backup dos Dados (JSON)
-              </h4>
-              <p class="text-xs text-zinc-400 leading-relaxed">
-                Baixe seu backup ou envie para carregar em outro computador sem perder nenhum link.
-              </p>
-              <div class="flex flex-wrap gap-2 pt-1">
-                <button onclick="baixarBackupJSON()" class="px-3 py-2 rounded-xl text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition flex items-center gap-1.5 border border-zinc-700">
-                  <i class="fa-solid fa-download"></i> Baixar JSON
-                </button>
-                <label class="cursor-pointer px-3 py-2 rounded-xl text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition flex items-center gap-1.5 border border-zinc-700">
-                  <i class="fa-solid fa-file-import"></i> Carregar JSON
-                  <input type="file" id="jsonFileInput" accept=".json" class="hidden" onchange="importarBackupJSON(event)">
-                </label>
+            <!-- Phone Header Bar info -->
+            <div class="flex items-center justify-between w-full max-w-[340px] px-2 mb-2">
+              <span class="text-xs font-bold tracking-wide text-zinc-300 flex items-center gap-1.5">
+                <i class="fa-solid fa-mobile-screen-button text-purple-400"></i> Prévia Instantânea
+              </span>
+              <span class="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-800/60">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Ao Vivo
+              </span>
+            </div>
+
+            <!-- Virtual Phone Mockup Body -->
+            <div class="phone-simulator-shell">
+              <div class="phone-dynamic-island"></div>
+              
+              <div class="phone-status-bar">
+                <span id="phoneClock">19:42</span>
+                <div class="flex items-center gap-1.5 text-[11px]">
+                  <i class="fa-solid fa-signal text-[9px]"></i>
+                  <i class="fa-solid fa-wifi text-[9px]"></i>
+                  <i class="fa-solid fa-battery-full text-[11px] text-purple-400"></i>
+                </div>
+              </div>
+
+              <!-- Phone scrollable content rendering the current bio -->
+              <div id="adminMiniPreview" class="phone-screen-content">
+                <!-- Populated dynamically via JS -->
               </div>
             </div>
 
-            <!-- Generate Single Static HTML Box -->
-            <div class="bg-zinc-950 p-4 rounded-2xl border border-zinc-800 space-y-3">
-              <h4 class="text-xs font-bold text-zinc-300 uppercase tracking-wide flex items-center gap-1.5">
-                <i class="fa-brands fa-github text-purple-400"></i> Publicação no GitHub Pages
-              </h4>
-              <p class="text-xs text-zinc-400 leading-relaxed">
-                Gere um arquivo estático para o GitHub Pages que <strong>mantém a detecção da Twitch em tempo real via JS</strong>:
-              </p>
-              <div class="flex flex-wrap gap-2 pt-1">
-                <button onclick="copiarHTMLFinal()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-purple-600 hover:bg-purple-700 text-white transition flex items-center gap-1.5 shadow-md shadow-purple-600/30">
-                  <i class="fa-solid fa-copy"></i> Copiar Código HTML Final
-                </button>
-                <button onclick="baixarHTMLFinal()" class="px-3 py-2 rounded-xl text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition flex items-center gap-1.5 border border-zinc-700">
-                  <i class="fa-solid fa-file-code"></i> Baixar index.html
-                </button>
-              </div>
-            </div>
-
+            <p class="text-[11px] text-zinc-500 mt-3 text-center">
+              Fixo na lateral: tudo o que você digita atualiza a prévia na hora.
+            </p>
           </div>
         </div>
 
+        <!-- RIGHT COLUMN: Settings Controls and Forms -->
+        <div class="flex-1 w-full bg-zinc-900/60 border border-zinc-800 rounded-3xl p-5 sm:p-8 backdrop-blur-sm space-y-8">
+          
+          <!-- Header config banner -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800 pb-5">
+            <div>
+              <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-sliders text-purple-400"></i> Configurações da Página
+              </h2>
+              <p class="text-xs text-zinc-400 mt-1">Personalize dados, links, redes sociais e detecção em tempo real da Twitch.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="salvarTudoManualmente()" class="px-4 py-2 rounded-xl text-xs font-bold bg-purple-600 hover:bg-purple-700 text-white transition flex items-center gap-1.5 shadow-lg shadow-purple-600/30">
+                <i class="fa-solid fa-floppy-disk"></i> Salvar Agora
+              </button>
+              <button onclick="restaurarPadrao()" class="px-3 py-2 rounded-xl text-xs font-medium bg-zinc-800 hover:bg-red-950/40 hover:text-red-300 text-zinc-400 border border-zinc-700 transition" title="Restaurar padrões">
+                <i class="fa-solid fa-rotate-left"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Section 0: Twitch Live Auto-Detection -->
+          <div class="space-y-4 bg-purple-950/20 border border-purple-800/40 rounded-2xl p-4 sm:p-5">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300 flex items-center gap-2">
+                <i class="fa-brands fa-twitch text-lg text-purple-400"></i> Detecção Automática de Live na Twitch
+              </h3>
+              <span id="twitchStatusIndicator" class="text-xs px-2.5 py-1 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700 flex items-center gap-1.5 font-medium">
+                <span class="w-2 h-2 rounded-full bg-zinc-500"></span> Verificando...
+              </span>
+            </div>
+            <p class="text-xs text-zinc-300 leading-relaxed">
+              A badge <strong>"🔴 AO VIVO"</strong> só é ativada se seu canal estiver transmitindo de verdade (usando consulta pública DecAPI sem expor tokens ou secrets). Se estiver offline, ela se oculta automaticamente.
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-medium text-zinc-300 mb-1">Nome de Usuário da Twitch (Canal)</label>
+                <div class="flex gap-2">
+                  <span class="inline-flex items-center px-3 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-zinc-500">twitch.tv/</span>
+                  <input type="text" id="cfgTwitchUsername" oninput="updateConfigField('twitchUsername', this.value.trim().toLowerCase())" class="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-purple-500 transition font-mono" placeholder="omarotto">
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-zinc-300 mb-1">Checagem em Tempo Real</label>
+                <select id="cfgAutoDetectLive" onchange="updateConfigField('autoDetectLive', this.value === 'true')" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none">
+                  <option value="true">Ativado (Automático)</option>
+                  <option value="false">Desativado (Sempre Oculto)</option>
+                </select>
+              </div>
+            </div>
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-purple-900/30 text-xs text-zinc-400">
+              <span id="twitchLastCheckedText">Aguardando verificação...</span>
+              <button onclick="verificarStatusTwitch(true)" class="px-2.5 py-1 rounded-lg bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 text-[11px] font-medium transition flex items-center gap-1">
+                <i class="fa-solid fa-arrows-rotate"></i> Testar Status Agora
+              </button>
+            </div>
+          </div>
+
+          <!-- Section A: Profile Data -->
+          <div class="space-y-4">
+            <h3 class="text-sm font-semibold uppercase tracking-wider text-purple-400 flex items-center gap-2">
+              <i class="fa-solid fa-user-astronaut"></i> Dados do Perfil
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-medium text-zinc-400 mb-1">Nome de Exibição</label>
+                <input type="text" id="cfgDisplayName" oninput="updateConfigField('displayName', this.value)" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500 transition" placeholder="Ex: oMarotto">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-zinc-400 mb-1">Nome de Usuário (@)</label>
+                <input type="text" id="cfgUsername" oninput="updateConfigField('username', this.value)" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500 transition" placeholder="Ex: @omarotto">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-medium text-zinc-400 mb-1">Foto de Perfil (Caminho Relativo, URL ou Arquivo)</label>
+                <div class="flex gap-2">
+                  <input type="text" id="cfgAvatarUrl" oninput="updateConfigField('avatarUrl', this.value)" class="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-purple-500 transition" placeholder="Bio and pannel/Fotos/foto-5.png ou URL">
+                  <label class="cursor-pointer bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 px-3 py-2 rounded-xl text-xs flex items-center justify-center text-zinc-200 transition" title="Carregar do dispositivo">
+                    <i class="fa-solid fa-upload"></i>
+                    <input type="file" id="cfgAvatarFile" accept="image/*" class="hidden" onchange="tratarUploadAvatar(event)">
+                  </label>
+                </div>
+                <span class="text-[10px] text-zinc-500 block mt-1">Exemplo: <code>Bio and pannel/Fotos/foto-5.png</code></span>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-zinc-400 mb-1">Texto da Badge quando Ao Vivo</label>
+                <input type="text" id="cfgStatusTag" oninput="updateConfigField('statusTag', this.value)" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-purple-500 transition" placeholder="🔴 AO VIVO NA TWITCH">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-zinc-400 mb-1">Biografia / Descrição</label>
+              <textarea id="cfgBio" rows="2" oninput="updateConfigField('bio', this.value)" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-purple-500 transition" placeholder="Sua bio curta..."></textarea>
+            </div>
+          </div>
+
+          <!-- Section B: Style & Custom Appearance -->
+          <div class="space-y-4 border-t border-zinc-800 pt-6">
+            <h3 class="text-sm font-semibold uppercase tracking-wider text-purple-400 flex items-center gap-2">
+              <i class="fa-solid fa-palette"></i> Cores, Temas & Visual
+            </h3>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div>
+                <label class="block text-xs font-medium text-zinc-400 mb-1">Cor Primária (Destaque)</label>
+                <div class="flex items-center gap-2 bg-zinc-950 border border-zinc-800 rounded-xl p-1.5">
+                  <input type="color" id="cfgPrimaryColor" oninput="updateConfigField('primaryColor', this.value)" class="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-0 p-0">
+                  <span id="cfgPrimaryColorHex" class="text-xs font-mono text-zinc-400">#9146FF</span>
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-zinc-400 mb-1">Fundo da Página</label>
+                <div class="flex items-center gap-2 bg-zinc-950 border border-zinc-800 rounded-xl p-1.5">
+                  <input type="color" id="cfgBgColor" oninput="updateConfigField('bgColor', this.value)" class="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-0 p-0">
+                  <span id="cfgBgColorHex" class="text-xs font-mono text-zinc-400">#0e0e10</span>
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-zinc-400 mb-1">Formato dos Botões</label>
+                <select id="cfgButtonRadius" onchange="updateConfigField('buttonRadius', this.value)" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
+                  <option value="rounded-2xl">Moderno (Suave)</option>
+                  <option value="rounded-full">Pílula (Arredondado)</option>
+                  <option value="rounded-lg">Compacto</option>
+                  <option value="rounded-none">Reto / Retangular</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-zinc-400 mb-1">Estilo dos Botões</label>
+                <select id="cfgButtonStyle" onchange="updateConfigField('buttonStyle', this.value)" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
+                  <option value="glass">Vidro Gamer (Glass)</option>
+                  <option value="solid">Sólido Escuro</option>
+                  <option value="outline">Apenas Borda (Outline)</option>
+                  <option value="neon">Neon Brilhante</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section C: Quick Social Bar Manager -->
+          <div class="space-y-4 border-t border-zinc-800 pt-6">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-semibold uppercase tracking-wider text-purple-400 flex items-center gap-2">
+                <i class="fa-solid fa-share-nodes"></i> Barra de Ícones Sociais
+              </h3>
+              <span class="text-xs text-zinc-400">Aparecem logo abaixo da biografia</span>
+            </div>
+            <div id="adminSocialsList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              <!-- Dynamic Social Inputs -->
+            </div>
+          </div>
+
+          <!-- Section D: Links Manager -->
+          <div class="space-y-4 border-t border-zinc-800 pt-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-sm font-semibold uppercase tracking-wider text-purple-400 flex items-center gap-2">
+                  <i class="fa-solid fa-link"></i> Gerenciador de Links Principais
+                </h3>
+                <p class="text-xs text-zinc-400">Adicione botões, canais, lojas, campanhas e destaque com animações.</p>
+              </div>
+              <button onclick="adicionarNovoLink()" class="px-3 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition flex items-center gap-1.5 shadow-md shadow-emerald-700/30">
+                <i class="fa-solid fa-plus"></i> Novo Link
+              </button>
+            </div>
+
+            <!-- Links Container for Admin -->
+            <div id="adminLinksList" class="space-y-3.5">
+              <!-- Link cards rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Section E: Export / GitHub Pages Synchronization -->
+          <div id="exportSection" class="space-y-4 border-t border-zinc-800 pt-6">
+            <h3 class="text-sm font-semibold uppercase tracking-wider text-purple-400 flex items-center gap-2">
+              <i class="fa-solid fa-cloud-arrow-down"></i> Publicação no GitHub Pages & Backup
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              
+              <!-- Export / Import JSON Box -->
+              <div class="bg-zinc-950 p-4 rounded-2xl border border-zinc-800 space-y-3">
+                <h4 class="text-xs font-bold text-zinc-300 uppercase tracking-wide flex items-center gap-1.5">
+                  <i class="fa-solid fa-database text-purple-400"></i> Backup dos Dados (JSON)
+                </h4>
+                <p class="text-xs text-zinc-400 leading-relaxed">
+                  Baixe seu backup ou envie para carregar em outro computador sem perder nenhum link.
+                </p>
+                <div class="flex flex-wrap gap-2 pt-1">
+                  <button onclick="baixarBackupJSON()" class="px-3 py-2 rounded-xl text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition flex items-center gap-1.5 border border-zinc-700">
+                    <i class="fa-solid fa-download"></i> Baixar JSON
+                  </button>
+                  <label class="cursor-pointer px-3 py-2 rounded-xl text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition flex items-center gap-1.5 border border-zinc-700">
+                    <i class="fa-solid fa-file-import"></i> Carregar JSON
+                    <input type="file" id="jsonFileInput" accept=".json" class="hidden" onchange="importarBackupJSON(event)">
+                  </label>
+                </div>
+              </div>
+
+              <!-- Generate Single Static HTML Box -->
+              <div class="bg-zinc-950 p-4 rounded-2xl border border-zinc-800 space-y-3">
+                <h4 class="text-xs font-bold text-zinc-300 uppercase tracking-wide flex items-center gap-1.5">
+                  <i class="fa-brands fa-github text-purple-400"></i> Publicação no GitHub Pages
+                </h4>
+                <p class="text-xs text-zinc-400 leading-relaxed">
+                  Gere um arquivo estático para o GitHub Pages que <strong>mantém a detecção da Twitch em tempo real via JS</strong>:
+                </p>
+                <div class="flex flex-wrap gap-2 pt-1">
+                  <button onclick="copiarHTMLFinal()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-purple-600 hover:bg-purple-700 text-white transition flex items-center gap-1.5 shadow-md shadow-purple-600/30">
+                    <i class="fa-solid fa-copy"></i> Copiar Código HTML Final
+                  </button>
+                  <button onclick="baixarHTMLFinal()" class="px-3 py-2 rounded-xl text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition flex items-center gap-1.5 border border-zinc-700">
+                    <i class="fa-solid fa-file-code"></i> Baixar index.html
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
       </div>
     </section>
 
@@ -508,7 +562,7 @@
       username: "@omarotto",
       twitchUsername: "omarotto",
       autoDetectLive: true,
-      avatarUrl: "https://placehold.co/200x200/18181b/9146FF?text=OM",
+      avatarUrl: "Bio and pannel/Fotos/foto-5.png",
       bio: "Criador de conteúdo, Gamer & Desenvolvedor de Widgets.\nAcompanhe minhas lives e confira os projetos nos links abaixo!",
       statusTag: "🔴 AO VIVO NA TWITCH",
       primaryColor: "#9146FF",
@@ -548,7 +602,7 @@
           id: "link_widgets",
           title: "Widgets Gratuitos para OBS",
           subtitle: "Widgets de jogo atual, metas e avisos de live",
-          url: "https://github.com",
+          url: "https://github.com/jackmarotto/Streamer-Bio-and-pannels",
           icon: "fa-solid fa-gamepad",
           highlight: false,
           badge: "Novo",
@@ -604,6 +658,7 @@
       preencherFormularioAdmin();
       renderizarTudo();
       popularGradeIcones();
+      atualizarRelogioMockup();
 
       // Inicia verificação do status da Twitch
       verificarStatusTwitch(false);
@@ -611,7 +666,17 @@
       twitchCheckInterval = setInterval(() => {
         verificarStatusTwitch(false);
       }, 60000);
+
+      setInterval(atualizarRelogioMockup, 30000);
     });
+
+    function atualizarRelogioMockup() {
+      const el = document.getElementById('phoneClock');
+      if (el) {
+        const now = new Date();
+        el.innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      }
+    }
 
     async function verificarStatusTwitch(isManualClick = false) {
       const channel = (appConfig.twitchUsername || "").trim().toLowerCase();
@@ -635,12 +700,10 @@
       }
 
       try {
-        // Consulta o uptime via DecAPI (Proxy público sem expor client secrets)
         const response = await fetch(`https://decapi.me/twitch/uptime/${channel}`);
         const text = await response.text();
 
         const lower = text.toLowerCase();
-        // Se a resposta contiver offline ou canal não encontrado
         const isOffline = lower.includes('offline') || lower.includes('user not found') || lower.includes('not found') || lower.includes('error');
 
         if (!isOffline && response.ok) {
@@ -701,7 +764,6 @@
         }
         txtStatusTag.innerText = label;
       } else {
-        // Se estiver offline ou desligado, ESCONDE completamente
         container.classList.add('hidden');
       }
     }
@@ -732,13 +794,28 @@
     }
 
     function restaurarPadrao() {
-      if (confirm("Deseja restaurar todas as configurações para o padrão original? Seus links customizados serão resetados.")) {
+      const confMsg = "Deseja restaurar todas as configurações para o padrão original? Seus links customizados serão resetados.";
+      const tempModal = document.createElement('div');
+      tempModal.className = "fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4";
+      tempModal.innerHTML = `
+        <div class="bg-zinc-900 border border-zinc-700 p-6 rounded-2xl max-w-sm w-full text-center space-y-4">
+          <p class="text-sm text-zinc-200">${confMsg}</p>
+          <div class="flex justify-center gap-3">
+            <button id="cancelResetBtn" class="px-4 py-2 bg-zinc-800 text-zinc-300 text-xs rounded-xl">Cancelar</button>
+            <button id="confirmResetBtn" class="px-4 py-2 bg-red-600 text-white text-xs font-bold rounded-xl">Restaurar</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(tempModal);
+      document.getElementById('cancelResetBtn').onclick = () => tempModal.remove();
+      document.getElementById('confirmResetBtn').onclick = () => {
         appConfig = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
         salvarConfiguracao();
         preencherFormularioAdmin();
         renderizarTudo();
         verificarStatusTwitch(false);
-      }
+        tempModal.remove();
+      };
     }
 
     function mostrarToast(mensagem) {
@@ -908,8 +985,6 @@
       // Render Links
       const linksContainer = document.getElementById('publicLinksContainer');
       linksContainer.innerHTML = '';
-      
-      const channel = (appConfig.twitchUsername || "").trim().toLowerCase();
 
       (appConfig.links || []).filter(l => l.active).forEach(item => {
         const isTwitchLink = (item.url && item.url.toLowerCase().includes('twitch.tv/')) || (item.icon && item.icon.includes('twitch'));
@@ -959,11 +1034,12 @@
       if (!container) return;
 
       const isLiveNow = appConfig.autoDetectLive && twitchLiveState.isLive;
+      const primaryColor = appConfig.primaryColor || '#9146FF';
 
       let socialsHtml = '';
       (appConfig.socials || []).filter(s => s.active && s.url).forEach(soc => {
         socialsHtml += `
-          <a href="${soc.url}" target="_blank" class="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center text-xs">
+          <a href="${soc.url}" target="_blank" class="w-7 h-7 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center text-[11px]">
             <i class="${soc.icon}"></i>
           </a>
         `;
@@ -975,7 +1051,7 @@
         const linkIsLive = isLiveNow && isTwitchLink;
 
         linksHtml += `
-          <div class="w-full p-2.5 rounded-xl border ${linkIsLive ? 'border-red-500 bg-red-950/40 text-white' : (item.highlight ? 'border-purple-500 bg-purple-950/30' : 'border-zinc-800 bg-zinc-900/60')} flex items-center justify-between text-xs">
+          <div class="w-full p-2 rounded-xl border ${linkIsLive ? 'border-red-500 bg-red-950/40 text-white animate-pulse' : (item.highlight ? 'border-purple-500 bg-purple-950/30' : 'border-zinc-800 bg-zinc-900/60')} flex items-center justify-between text-xs">
             <div class="flex items-center gap-2 min-w-0 pr-1">
               <div class="w-7 h-7 rounded-lg ${linkIsLive ? 'bg-red-600 text-white' : (item.highlight ? 'bg-purple-600 text-white' : 'bg-zinc-800 text-purple-400')} flex items-center justify-center flex-shrink-0 text-[11px]">
                 <i class="${item.icon}"></i>
@@ -988,7 +1064,7 @@
                 <div class="text-[9px] text-zinc-400 truncate">${linkIsLive ? 'Transmitindo agora!' : escapeHtml(item.subtitle || '')}</div>
               </div>
             </div>
-            <i class="fa-solid fa-chevron-right text-[10px] text-zinc-500"></i>
+            <i class="fa-solid fa-chevron-right text-[9px] text-zinc-500"></i>
           </div>
         `;
       });
@@ -996,20 +1072,27 @@
       container.innerHTML = `
         <div class="flex flex-col items-center w-full">
           ${isLiveNow ? `
-            <div class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-red-950 border border-red-500 text-red-200 mb-2 flex items-center gap-1 animate-pulse">
+            <div class="px-2.5 py-0.5 rounded-full text-[9px] font-bold bg-red-950 border border-red-500 text-red-200 mb-2 flex items-center gap-1 animate-pulse">
               <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> ${escapeHtml(appConfig.statusTag || 'AO VIVO NA TWITCH')}
             </div>
           ` : ''}
-          <img src="${appConfig.avatarUrl || 'https://placehold.co/100x100'}" class="w-16 h-16 rounded-full border border-purple-500/80 shadow mb-2 object-cover" />
-          <h4 class="font-bold text-sm text-white">${escapeHtml(appConfig.displayName)}</h4>
-          <span class="text-[11px] font-mono text-purple-400">${escapeHtml(appConfig.username)}</span>
-          <p class="text-[10px] text-zinc-400 text-center mt-1.5 line-clamp-2 px-2">${escapeHtml(appConfig.bio)}</p>
+          
+          <div class="relative mb-2">
+            <img src="${appConfig.avatarUrl || 'https://placehold.co/100x100'}" onerror="this.src='https://placehold.co/100x100/18181b/9146FF?text=OM'" class="w-14 h-14 rounded-full border-2 border-purple-500/80 shadow object-cover" />
+            <span class="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-purple-600 border border-zinc-900 flex items-center justify-center text-[8px] text-white">
+              <i class="fa-solid fa-check"></i>
+            </span>
+          </div>
 
-          <div class="flex gap-1.5 my-3">
+          <h4 class="font-bold text-xs text-white text-center leading-tight">${escapeHtml(appConfig.displayName)}</h4>
+          <span class="text-[10px] font-mono text-purple-400 mt-0.5">${escapeHtml(appConfig.username)}</span>
+          <p class="text-[9px] text-zinc-400 text-center mt-1.5 line-clamp-2 px-1 leading-snug">${escapeHtml(appConfig.bio)}</p>
+
+          <div class="flex flex-wrap justify-center gap-1 my-2.5">
             ${socialsHtml}
           </div>
 
-          <div class="w-full space-y-2 mt-1">
+          <div class="w-full space-y-1.5 mt-0.5">
             ${linksHtml}
           </div>
         </div>
@@ -1155,12 +1238,26 @@
     }
 
     function excluirLink(index) {
-      if (confirm("Remover este link permanentemente?")) {
+      const tempModal = document.createElement('div');
+      tempModal.className = "fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4";
+      tempModal.innerHTML = `
+        <div class="bg-zinc-900 border border-zinc-700 p-5 rounded-2xl max-w-sm w-full text-center space-y-4">
+          <p class="text-sm text-zinc-200">Remover este link permanentemente?</p>
+          <div class="flex justify-center gap-3">
+            <button id="cancelDelBtn" class="px-4 py-2 bg-zinc-800 text-zinc-300 text-xs rounded-xl">Cancelar</button>
+            <button id="confirmDelBtn" class="px-4 py-2 bg-red-600 text-white text-xs font-bold rounded-xl">Remover</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(tempModal);
+      document.getElementById('cancelDelBtn').onclick = () => tempModal.remove();
+      document.getElementById('confirmDelBtn').onclick = () => {
         appConfig.links.splice(index, 1);
         salvarConfiguracao();
         renderizarListaLinksAdmin();
         renderizarTudo();
-      }
+        tempModal.remove();
+      };
     }
 
     function popularGradeIcones() {
@@ -1324,7 +1421,7 @@
       </a>
     </div>
 
-    <img src="${cfg.avatarUrl}" alt="Avatar" class="avatar">
+    <img src="${cfg.avatarUrl}" alt="Avatar" onerror="this.src='https://placehold.co/110x110/18181b/9146FF?text=OM'" class="avatar">
     <h1 style="font-size: 22px; font-weight: 800;">${escapeHtml(cfg.displayName)}</h1>
     <p style="font-size: 14px; font-weight: 600; color: ${cfg.primaryColor}; margin-top: 4px;">${escapeHtml(cfg.username)}</p>
     <p style="font-size: 13px; color: #a1a1aa; max-width: 420px; margin: 12px 0 20px 0; line-height: 1.5; white-space: pre-line;">${escapeHtml(cfg.bio)}</p>
@@ -1343,7 +1440,6 @@
   </main>
 
   <script>
-    // Real-time Twitch Live checker (DecAPI proxy)
     const channelName = "${channel}";
     const autoDetect = ${cfg.autoDetectLive ? 'true' : 'false'};
 
@@ -1363,7 +1459,6 @@
         const twitchSubText = document.getElementById('twitchSubText');
 
         if (!isOffline && res.ok) {
-          // ESTÁ AO VIVO DE VERDADE
           if (badgeWrap) badgeWrap.style.display = 'block';
           if (badgeText) badgeText.innerText = '🔴 AO VIVO NA TWITCH (' + text.trim() + ')';
           
@@ -1379,11 +1474,9 @@
             twitchSubText.style.color = '#fca5a5';
           }
         } else {
-          // OFFLINE - Esconde o badge
           if (badgeWrap) badgeWrap.style.display = 'none';
         }
       } catch (e) {
-        // Fallback silencioso
       }
     }
     checkTwitchLive();
