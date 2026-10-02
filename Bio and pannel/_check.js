@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html lang="pt-BR" class="dark">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>oMarotto | Hub de Links & Painel</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
-  
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
+
     tailwind.config = {
       darkMode: 'class',
       theme: {
@@ -1338,6 +1329,4 @@
       if (!string) return '';
       return String(string).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
-  </script>
-</body>
-</html>
+  
