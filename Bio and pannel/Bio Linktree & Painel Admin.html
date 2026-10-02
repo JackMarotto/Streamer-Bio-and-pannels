@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>oMarotto | Hub de Links & Painel</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            twitch: {
+              DEFAULT: '#9146FF',
+              hover: '#772ce8',
+              dark: '#5c16c5',
+              light: '#bf94ff'
+            },
+            darkBg: '#0e0e10',
+            cardBg: '#18181b',
+            borderDark: '#26262c'
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome for robust gamer & social icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #121214;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2a2a30;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #9146FF;
+    }
+
+    /* Glow and pulse animations */
+    @keyframes pulseGlow {
+      0%, 100% {
+        box-shadow: 0 0 15px rgba(145, 70, 255, 0.4), inset 0 0 10px rgba(145, 70, 255, 0.2);
+      }
+      50% {
+        box-shadow: 0 0 28px rgba(145, 70, 255, 0.8), inset 0 0 15px rgba(145, 70, 255, 0.4);
+      }
+    }
+    .animate-pulse-glow {
+      animation: pulseGlow 2.5s infinite ease-in-out;
+    }
+
+    @keyframes livePingPulse {
+      0%, 100% {
+        box-shadow: 0 0 16px rgba(239, 68, 68, 0.5), inset 0 0 8px rgba(239, 68, 68, 0.3);
+      }
+      50% {
+        box-shadow: 0 0 30px rgba(239, 68, 68, 0.9), inset 0 0 15px rgba(239, 68, 68, 0.5);
+      }
+    }
+    .animate-live-glow {
+      animation: livePingPulse 2s infinite ease-in-out;
+    }
+
+    .glassmorphism {
+      background: rgba(24, 24, 27, 0.7);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    /* Device frame simulator */
+    .mobile-frame-wrap {
+      width: 380px;
+      max-width: 100%;
+      height: 780px;
+      border-radius: 40px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 0 8px #27272a;
+      overflow: hidden;
+      border: 4px solid #18181b;
+      position: relative;
+    }
+    
+    .mobile-notch {
+      width: 120px;
+      height: 20px;
+      background: #18181b;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      z-index: 50;
+    }
+  </style>
+</head>
+
+<body class="bg-[#0b0b0e] text-zinc-100 font-sans antialiased min-h-screen flex flex-col selection:bg-purple-600 selection:text-white">
+
+  <!-- Top Global Navigation Bar -->
+  <header class="sticky top-0 z-50 bg-[#121215]/90 backdrop-blur-md border-b border-zinc-800/80 px-4 py-3 sm:px-6">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <span class="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-700 to-indigo-500 shadow-md shadow-purple-600/30 font-extrabold text-white text-lg">
+          <i class="fa-solid fa-bolt"></i>
+        </span>
+        <div>
+          <h1 class="font-bold text-sm tracking-wide text-white flex items-center gap-2">
+            oMarotto <span class="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800">Hub Pages</span>
+          </h1>
+          <p class="text-xs text-zinc-400">Bio Linktree com Twitch Live Sync</p>
+        </div>
+      </div>
+
+      <!-- Mode Switcher Tabs -->
+      <div class="flex items-center bg-zinc-900/90 p-1 rounded-xl border border-zinc-800 shadow-inner">
+        <button id="navBtnPreview" onclick="switchView('preview')" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 bg-purple-600 text-white shadow-sm shadow-purple-600/50">
+          <i class="fa-solid fa-eye"></i>
+          <span>Página Pública (Bio)</span>
+        </button>
+        <button id="navBtnAdmin" onclick="switchView('admin')" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 text-zinc-400 hover:text-white">
+          <i class="fa-solid fa-sliders"></i>
+          <span>Painel de Config</span>
+        </button>
+      </div>
+
+      <!-- Quick Action: Export / Share -->
+      <div class="hidden sm:flex items-center gap-2">
+        <button onclick="copiarLinkPublico()" title="Copiar Link para compartilhar" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-zinc-800/80 hover:bg-zinc-700 text-zinc-200 border border-zinc-700/60 transition">
+          <i class="fa-solid fa-share-nodes text-purple-400"></i>
+          <span>Compartilhar</span>
+        </button>
+        <button onclick="switchView('admin'); rolarParaExportacao();" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 transition">
+          <i class="fa-solid fa-code"></i>
+          <span>Gerar index.html</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notice toast floating banner -->
+  <div id="toastNotification" class="fixed bottom-5 right-5 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none flex items-center gap-3 bg-zinc-900 text-white px-4 py-3 rounded-xl border border-purple-500/40 shadow-2xl shadow-purple-900/40 text-sm">
+    <div id="toastIcon" class="text-purple-400 text-lg"><i class="fa-solid fa-check-circle"></i></div>
+    <div id="toastMsg" class="font-medium">Alteração salva!</div>
+  </div>
+
+  <main class="flex-1 flex flex-col items-center justify-start p-3 sm:p-6 w-full">
+    
+    <!-- VIEW CONTAINER: Public Bio -->
+    <section id="sectionPreview" class="w-full flex flex-col items-center justify-center transition-all duration-300">
+      
+      <!-- Public page frame (centralized responsive card container) -->
+      <div id="publicPageCanvas" class="w-full max-w-[580px] min-h-[820px] rounded-3xl p-6 sm:p-8 flex flex-col items-center relative transition-all duration-300 border border-zinc-800/60 shadow-2xl shadow-black/80 my-2">
+        
+        <!-- Live Status Pill (Real Twitch Live Detection) -->
+        <div id="statusBadgeContainer" class="mb-4 hidden">
+          <a id="statusBadgeLink" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-red-950/80 border border-red-500/50 text-red-200 shadow-lg shadow-red-900/30 hover:bg-red-900/80 transition transform hover:scale-105">
+            <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
+            <span id="txtStatusTag">🔴 AO VIVO NA TWITCH</span>
+          </a>
+        </div>
+
+        <!-- Avatar Profile with Glow Ring -->
+        <div class="relative group cursor-pointer mb-4">
+          <div id="avatarGlow" class="absolute -inset-1 rounded-full bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 opacity-75 blur-md group-hover:opacity-100 transition duration-500"></div>
+          <img id="publicAvatarImg" src="https://placehold.co/160x160/1a1a24/9146FF?text=OM" alt="Avatar" onerror="this.src='https://placehold.co/160x160/1a1a24/9146FF?text=OM'" class="relative w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover border-2 border-zinc-800 shadow-2xl transition duration-300 group-hover:scale-105" />
+          <div id="verifiedBadge" class="absolute bottom-1 right-1 bg-purple-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-[11px] border-2 border-zinc-900 shadow">
+            <i class="fa-solid fa-check"></i>
+          </div>
+        </div>
+
+        <!-- Names & Bio -->
+        <div class="text-center w-full px-2">
+          <h2 id="publicDisplayName" class="text-2xl font-extrabold tracking-tight text-white flex items-center justify-center gap-1.5">
+            <span>oMarotto</span>
+          </h2>
+          <p id="publicUsername" class="text-sm font-medium text-purple-400 tracking-wide mt-0.5">@omarotto</p>
+          <p id="publicBioText" class="text-sm text-zinc-300/90 max-w-md mx-auto mt-3 leading-relaxed whitespace-pre-line font-normal">
+            Streamer, entusiasta de tecnologia & criador de conteúdo gamer. Bem-vindo ao meu hub oficial!
+          </p>
+        </div>
+
+        <!-- Social Icons Row (Quick bar) -->
+        <div id="publicSocialsRow" class="flex flex-wrap items-center justify-center gap-3 my-5 w-full">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <!-- Main Links List (Buttons) -->
+        <div id="publicLinksContainer" class="w-full flex flex-col gap-3.5 my-2">
+          <!-- Rendered via JS -->
+        </div>
+
+        <!-- Footer / Credits -->
+        <footer class="mt-auto pt-8 pb-2 text-center text-xs text-zinc-500 font-medium">
+          <p class="flex items-center justify-center gap-1">
+            <span>Criado com</span>
+            <i class="fa-solid fa-heart text-purple-500 text-[10px]"></i>
+            <span id="footerBrandName">oMarotto Hub</span>
+          </p>
+          <a href="#admin" onclick="switchView('admin')" class="inline-block mt-2 text-[11px] text-zinc-600 hover:text-purple-400 transition">
+            ⚙️ Gerenciar Links e Layout
+          </a>
+        </footer>
+
+      </div>
+    </section>
+
+    <section id="sectionAdmin" class="w-full max-w-7xl hidden flex-col lg:flex-row gap-6 transition-all duration-300">
+      
+      <!-- Left side: Live Interactive Phone Simulator (Desktop Preview) -->
+      <div class="w-full lg:w-[460px] flex flex-col items-center flex-shrink-0">
+        <div class="sticky top-20 flex flex-col items-center w-full">
+          <div class="flex items-center justify-between w-full max-w-[380px] px-2 mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
+              <i class="fa-solid fa-mobile-screen text-purple-400"></i> Prévia em Tempo Real
+            </span>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700">Mobile Mockup</span>
+          </div>
+
+          <!-- Virtual Phone Wrapper -->
+          <div class="mobile-frame-wrap bg-zinc-950 flex flex-col">
+            <div class="mobile-notch"></div>
+            <!-- Scaled container mirroring the actual public page -->
+            <div id="adminMiniPreview" class="w-full h-full overflow-y-auto px-5 py-8 flex flex-col items-center">
+              <!-- Content mirrored dynamically from public generator -->
+            </div>
+          </div>
+          <p class="text-[11px] text-zinc-500 mt-2 text-center">Toda alteração feita ao lado é refletida imediatamente.</p>
+        </div>
+      </div>
+
+      <!-- Right side: Settings & Configuration Controls -->
+      <div class="flex-1 bg-zinc-900/60 border border-zinc-800 rounded-3xl p-5 sm:p-8 backdrop-blur-sm space-y-8">
+        
+        <!-- Header config banner -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800 pb-5">
+          <div>
+            <h2 class="text-xl font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-sliders text-purple-400"></i> Painel de Configurações
+            </h2>
+            <p class="text-xs text-zinc-400 mt-1">Configure o perfil, aparência visual e integração em tempo real com a Twitch.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="salvarTudoManualmente()" class="px-4 py-2 rounded-xl text-xs font-bold bg-purple-600 hover:bg-purple-700 text-white transition flex items-center gap-1.5 shadow-lg shadow-purple-600/30">
+              <i class="fa-solid fa-floppy-disk"></i> Salvar Agora
+            </button>
+            <button onclick="restaurarPadrao()" class="px-3 py-2 rounded-xl text-xs font-medium bg-zinc-800 hover:bg-red-950/40 hover:text-red-300 text-zinc-400 border border-zinc-700 transition" title="Restaurar padrões">
+              <i class="fa-solid fa-rotate-left"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Section 0: Twitch Live Auto-Detection -->
+        <div class="space-y-4 bg-purple-950/20 border border-purple-800/40 rounded-2xl p-4 sm:p-5">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-purple-300 flex items-center gap-2">
+              <i class="fa-brands fa-twitch text-lg text-purple-400"></i> Detecção Automática de Live na Twitch
+            </h3>
+            <span id="twitchStatusIndicator" class="text-xs px-2.5 py-1 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700 flex items-center gap-1.5 font-medium">
+              <span class="w-2 h-2 rounded-full bg-zinc-500"></span> Verificando...
+            </span>
+          </div>
+          <p class="text-xs text-zinc-300 leading-relaxed">
+            A badge <strong>"🔴 AO VIVO"</strong> só é ativada se seu canal estiver transmitindo de verdade (usando consulta pública sem expor credenciais privadas). Se estiver offline, ela se oculta automaticamente.
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-medium text-zinc-300 mb-1">Nome de Usuário da Twitch (Canal)</label>
+              <div class="flex gap-2">
+                <span class="inline-flex items-center px-3 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-zinc-500">twitch.tv/</span>
+                <input type="text" id="cfgTwitchUsername" oninput="updateConfigField('twitchUsername', this.value.trim().toLowerCase())" class="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-purple-500 transition font-mono" placeholder="omarotto">
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-zinc-300 mb-1">Checagem em Tempo Real</label>
+              <select id="cfgAutoDetectLive" onchange="updateConfigField('autoDetectLive', this.value === 'true')" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none">
+                <option value="true">Ativado (Automático)</option>
+                <option value="false">Desativado (Sempre Oculto)</option>
+              </select>
+            </div>
+          </div>
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-purple-900/30 text-xs text-zinc-400">
+            <span id="twitchLastCheckedText">Aguardando verificação...</span>
+            <button onclick="verificarStatusTwitch(true)" class="px-2.5 py-1 rounded-lg bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 text-[11px] font-medium transition flex items-center gap-1">
+              <i class="fa-solid fa-arrows-rotate"></i> Testar Status Agora
+            </button>
+          </div>
+        </div>
+
+        <!-- Section A: Profile Data -->
+        <div class="space-y-4">
+          <h3 class="text-sm font-semibold uppercase tracking-wider text-purple-400 flex items-center gap-2">
+            <i class="fa-solid fa-user-astronaut"></i> Dados do Perfil
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-medium text-zinc-400 mb-1">Nome de Exibição</label>
+              <input type="text" id="cfgDisplayName" oninput="updateConfigField('displayName', this.value)" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500 transition" placeholder="Ex: oMarotto">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-zinc-400 mb-1">Nome de Usuário (@)</label>
+              <input type="text" id="cfgUsername" oninput="updateConfigField('username', this.value)" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500 transition" placeholder="Ex: @omarotto">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-medium text-zinc-400 mb-1">Foto de Perfil (URL ou Arquivo)</label>
+              <div class="flex gap-2">
+                <input type="text" id="cfgAvatarUrl" oninput="updateConfigField('avatarUrl', this.value)" class="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-purple-500 transition" placeholder="https://exemplo.com/avatar.jpg">
+                <label class="cursor-pointer bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 px-3 py-2 rounded-xl text-xs flex items-center justify-center text-zinc-200 transition" title="Carregar do dispositivo">
+                  <i class="fa-solid fa-upload"></i>
+                  <input type="file" id="cfgAvatarFile" accept="image/*" class="hidden" onchange="tratarUploadAvatar(event)">
+                </label>
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-zinc-400 mb-1">Texto da Badge quando Ao Vivo</label>
+              <input type="text" id="cfgStatusTag" oninput="updateConfigField('statusTag', this.value)" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-purple-500 transition" placeholder="🔴 AO VIVO NA TWITCH">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-zinc-400 mb-1">Biografia / Descrição</label>
+            <textarea id="cfgBio" rows="2" oninput="updateConfigField('bio', this.value)" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-purple-500 transition" placeholder="Sua bio curta..."></textarea>
+          </div>
+        </div>
+
+        <!-- Section B: Style & Custom Appearance -->
+        <div class="space-y-4 border-t border-zinc-800 pt-6">
+          <h3 class="text-sm font-semibold uppercase tracking-wider text-purple-400 flex items-center gap-2">
+            <i class="fa-solid fa-palette"></i> Cores, Temas & Visual
+          </h3>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div>
+              <label class="block text-xs font-medium text-zinc-400 mb-1">Cor Primária (Destaque)</label>
+              <div class="flex items-center gap-2 bg-zinc-950 border border-zinc-800 rounded-xl p-1.5">
+                <input type="color" id="cfgPrimaryColor" oninput="updateConfigField('primaryColor', this.value)" class="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-0 p-0">
+                <span id="cfgPrimaryColorHex" class="text-xs font-mono text-zinc-400">#9146FF</span>
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-zinc-400 mb-1">Fundo da Página</label>
+              <div class="flex items-center gap-2 bg-zinc-950 border border-zinc-800 rounded-xl p-1.5">
+                <input type="color" id="cfgBgColor" oninput="updateConfigField('bgColor', this.value)" class="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-0 p-0">
+                <span id="cfgBgColorHex" class="text-xs font-mono text-zinc-400">#0e0e10</span>
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-zinc-400 mb-1">Formato dos Botões</label>
+              <select id="cfgButtonRadius" onchange="updateConfigField('buttonRadius', this.value)" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
+                <option value="rounded-2xl">Moderno (Suave)</option>
+                <option value="rounded-full">Pílula (Arredondado)</option>
+                <option value="rounded-lg">Compacto</option>
+                <option value="rounded-none">Reto / Retangular</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-zinc-400 mb-1">Estilo dos Botões</label>
+              <select id="cfgButtonStyle" onchange="updateConfigField('buttonStyle', this.value)" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
+                <option value="glass">Vidro Gamer (Glass)</option>
+                <option value="solid">Sólido Escuro</option>
+                <option value="outline">Apenas Borda (Outline)</option>
+                <option value="neon">Neon Brilhante</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section C: Quick Social Bar Manager -->
+        <div class="space-y-4 border-t border-zinc-800 pt-6">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-semibold uppercase tracking-wider text-purple-400 flex items-center gap-2">
+              <i class="fa-solid fa-share-nodes"></i> Barra de Ícones Sociais
+            </h3>
+            <span class="text-xs text-zinc-400">Aparecem logo abaixo da biografia</span>
+          </div>
+          <div id="adminSocialsList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+            <!-- Dynamic Social Inputs -->
+          </div>
+        </div>
+
+        <!-- Section D: Links Manager (Add, reorder, delete, highlight) -->
+        <div class="space-y-4 border-t border-zinc-800 pt-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-sm font-semibold uppercase tracking-wider text-purple-400 flex items-center gap-2">
+                <i class="fa-solid fa-link"></i> Gerenciador de Links Principais
+              </h3>
+              <p class="text-xs text-zinc-400">Adicione botões, canais, lojas, campanhas e destaque com animações.</p>
+            </div>
+            <button onclick="adicionarNovoLink()" class="px-3 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition flex items-center gap-1.5 shadow-md shadow-emerald-700/30">
+              <i class="fa-solid fa-plus"></i> Novo Link
+            </button>
+          </div>
+
+          <!-- Links Container for Admin -->
+          <div id="adminLinksList" class="space-y-3.5">
+            <!-- Link cards with order, edit, toggle and remove -->
+          </div>
+        </div>
+
+        <!-- Section E: Export / GitHub Pages Synchronization -->
+        <div id="exportSection" class="space-y-4 border-t border-zinc-800 pt-6">
+          <h3 class="text-sm font-semibold uppercase tracking-wider text-purple-400 flex items-center gap-2">
+            <i class="fa-solid fa-cloud-arrow-down"></i> Publicação no GitHub Pages & Backup
+          </h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+            <!-- Export / Import JSON Box -->
+            <div class="bg-zinc-950 p-4 rounded-2xl border border-zinc-800 space-y-3">
+              <h4 class="text-xs font-bold text-zinc-300 uppercase tracking-wide flex items-center gap-1.5">
+                <i class="fa-solid fa-database text-purple-400"></i> Backup dos Dados (JSON)
+              </h4>
+              <p class="text-xs text-zinc-400 leading-relaxed">
+                Baixe seu backup ou envie para carregar em outro computador sem perder nenhum link.
+              </p>
+              <div class="flex flex-wrap gap-2 pt-1">
+                <button onclick="baixarBackupJSON()" class="px-3 py-2 rounded-xl text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition flex items-center gap-1.5 border border-zinc-700">
+                  <i class="fa-solid fa-download"></i> Baixar JSON
+                </button>
+                <label class="cursor-pointer px-3 py-2 rounded-xl text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition flex items-center gap-1.5 border border-zinc-700">
+                  <i class="fa-solid fa-file-import"></i> Carregar JSON
+                  <input type="file" id="jsonFileInput" accept=".json" class="hidden" onchange="importarBackupJSON(event)">
+                </label>
+              </div>
+            </div>
+
+            <!-- Generate Single Static HTML Box -->
+            <div class="bg-zinc-950 p-4 rounded-2xl border border-zinc-800 space-y-3">
+              <h4 class="text-xs font-bold text-zinc-300 uppercase tracking-wide flex items-center gap-1.5">
+                <i class="fa-brands fa-github text-purple-400"></i> Publicação no GitHub Pages
+              </h4>
+              <p class="text-xs text-zinc-400 leading-relaxed">
+                Gere um arquivo estático para o GitHub Pages que <strong>mantém a detecção da Twitch em tempo real via JS</strong>:
+              </p>
+              <div class="flex flex-wrap gap-2 pt-1">
+                <button onclick="copiarHTMLFinal()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-purple-600 hover:bg-purple-700 text-white transition flex items-center gap-1.5 shadow-md shadow-purple-600/30">
+                  <i class="fa-solid fa-copy"></i> Copiar Código HTML Final
+                </button>
+                <button onclick="baixarHTMLFinal()" class="px-3 py-2 rounded-xl text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition flex items-center gap-1.5 border border-zinc-700">
+                  <i class="fa-solid fa-file-code"></i> Baixar index.html
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal: Icon Picker / Helper -->
+  <div id="iconModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-zinc-900 border border-zinc-700 max-w-lg w-full rounded-3xl p-5 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
+        <h4 class="text-sm font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-icons text-purple-400"></i> Escolher Ícone
+        </h4>
+        <button onclick="fecharModalIcone()" class="text-zinc-400 hover:text-white text-lg">&times;</button>
+      </div>
+      <p class="text-xs text-zinc-400">Clique em qualquer ícone rápido ou digite a classe FontAwesome personalizada:</p>
+      
+      <!-- Quick icons grid -->
+      <div id="quickIconsGrid" class="grid grid-cols-6 gap-2 max-h-48 overflow-y-auto p-1">
+        <!-- populated dynamically -->
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-zinc-400 mb-1">Classe Customizada (FontAwesome)</label>
+        <input type="text" id="customIconClassInput" placeholder="Ex: fa-brands fa-twitch" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white">
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="fecharModalIcone()" class="px-4 py-1.5 rounded-xl text-xs bg-zinc-800 text-zinc-300">Cancelar</button>
+        <button onclick="confirmarIconeCustom()" class="px-4 py-1.5 rounded-xl text-xs bg-purple-600 text-white font-semibold">Aplicar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initial Default Data Config
+    const DEFAULT_CONFIG = {
+      displayName: "oMarotto",
+      username: "@omarotto",
+      twitchUsername: "omarotto",
+      autoDetectLive: true,
+      avatarUrl: "https://placehold.co/200x200/18181b/9146FF?text=OM",
+      bio: "Criador de conteúdo, Gamer & Desenvolvedor de Widgets.\nAcompanhe minhas lives e confira os projetos nos links abaixo!",
+      statusTag: "🔴 AO VIVO NA TWITCH",
+      primaryColor: "#9146FF",
+      bgColor: "#0e0e10",
+      buttonRadius: "rounded-2xl",
+      buttonStyle: "glass",
+      socials: [
+        { id: "s_twitch", name: "Twitch", icon: "fa-brands fa-twitch", url: "https://twitch.tv/omarotto", active: true },
+        { id: "s_youtube", name: "YouTube", icon: "fa-brands fa-youtube", url: "https://youtube.com/@omarotto", active: true },
+        { id: "s_discord", name: "Discord", icon: "fa-brands fa-discord", url: "https://discord.gg", active: true },
+        { id: "s_x", name: "Twitter / X", icon: "fa-brands fa-x-twitter", url: "https://x.com/omarotto", active: true },
+        { id: "s_instagram", name: "Instagram", icon: "fa-brands fa-instagram", url: "https://instagram.com/omarotto", active: true },
+        { id: "s_tiktok", name: "TikTok", icon: "fa-brands fa-tiktok", url: "https://tiktok.com/@omarotto", active: false }
+      ],
+      links: [
+        {
+          id: "link_twitch_main",
+          title: "Canal de Lives na Twitch",
+          subtitle: "Transmissões quase todos os dias às 19h",
+          url: "https://twitch.tv/omarotto",
+          icon: "fa-brands fa-twitch",
+          highlight: false,
+          badge: "",
+          active: true
+        },
+        {
+          id: "link_discord",
+          title: "Comunidade no Discord",
+          subtitle: "Participe de sorteios, bate-papo e novidades",
+          url: "https://discord.gg",
+          icon: "fa-brands fa-discord",
+          highlight: false,
+          badge: "VIP",
+          active: true
+        },
+        {
+          id: "link_widgets",
+          title: "Widgets Gratuitos para OBS",
+          subtitle: "Widgets de jogo atual, metas e avisos de live",
+          url: "https://github.com",
+          icon: "fa-solid fa-gamepad",
+          highlight: false,
+          badge: "Novo",
+          active: true
+        },
+        {
+          id: "link_setup",
+          title: "Setup Gamer & Equipamentos",
+          subtitle: "Periféricos, microfone e peças do PC recomendadas",
+          url: "https://amazon.com.br",
+          icon: "fa-solid fa-headset",
+          highlight: false,
+          badge: "",
+          active: true
+        },
+        {
+          id: "link_pix",
+          title: "Mande uma mensagem / Pix",
+          subtitle: "Apoie a produção de conteúdo do canal",
+          url: "https://tipa.ai",
+          icon: "fa-solid fa-qrcode",
+          highlight: false,
+          badge: "Apoio",
+          active: true
+        }
+      ]
+    };
+
+    // Global Live State
+    let appConfig = {};
+    let twitchLiveState = {
+      isLive: false,
+      uptime: "",
+      game: "",
+      lastChecked: null
+    };
+    let iconPickerTargetLinkId = null;
+    let twitchCheckInterval = null;
+
+    const POPULAR_ICONS = [
+      "fa-brands fa-twitch", "fa-brands fa-youtube", "fa-brands fa-discord", 
+      "fa-brands fa-x-twitter", "fa-brands fa-instagram", "fa-brands fa-tiktok", 
+      "fa-brands fa-github", "fa-brands fa-spotify", "fa-brands fa-steam",
+      "fa-solid fa-gamepad", "fa-solid fa-headset", "fa-solid fa-cart-shopping", 
+      "fa-solid fa-bolt", "fa-solid fa-fire", "fa-solid fa-star", 
+      "fa-solid fa-envelope", "fa-solid fa-heart", "fa-solid fa-qrcode", 
+      "fa-solid fa-video", "fa-solid fa-code", "fa-solid fa-coffee",
+      "fa-solid fa-globe", "fa-solid fa-trophy", "fa-solid fa-desktop"
+    ];
+
+    window.addEventListener('DOMContentLoaded', () => {
+      carregarConfiguracao();
+      preencherFormularioAdmin();
+      renderizarTudo();
+      popularGradeIcones();
+
+      // Inicia verificação do status da Twitch
+      verificarStatusTwitch(false);
+      // Checa a cada 60 segundos automaticamente
+      twitchCheckInterval = setInterval(() => {
+        verificarStatusTwitch(false);
+      }, 60000);
+    });
+
+    async function verificarStatusTwitch(isManualClick = false) {
+      const channel = (appConfig.twitchUsername || "").trim().toLowerCase();
+      const indicator = document.getElementById('twitchStatusIndicator');
+      const lastCheckLabel = document.getElementById('twitchLastCheckedText');
+
+      if (!appConfig.autoDetectLive || !channel) {
+        twitchLiveState.isLive = false;
+        twitchLiveState.uptime = "";
+        atualizarBadgeLiveUI();
+        if (indicator) {
+          indicator.className = "text-xs px-2.5 py-1 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700 flex items-center gap-1.5 font-medium";
+          indicator.innerHTML = `<span class="w-2 h-2 rounded-full bg-zinc-500"></span> Desativado`;
+        }
+        if (lastCheckLabel) lastCheckLabel.innerText = "Detecção desativada ou canal em branco.";
+        return;
+      }
+
+      if (indicator && isManualClick) {
+        indicator.innerHTML = `<span class="w-2 h-2 rounded-full bg-yellow-400 animate-spin"></span> Verificando...`;
+      }
+
+      try {
+        // Consulta o uptime via DecAPI (Proxy público sem expor client secrets)
+        const response = await fetch(`https://decapi.me/twitch/uptime/${channel}`);
+        const text = await response.text();
+
+        const lower = text.toLowerCase();
+        // Se a resposta contiver offline ou canal não encontrado
+        const isOffline = lower.includes('offline') || lower.includes('user not found') || lower.includes('not found') || lower.includes('error');
+
+        if (!isOffline && response.ok) {
+          twitchLiveState.isLive = true;
+          twitchLiveState.uptime = text.trim();
+        } else {
+          twitchLiveState.isLive = false;
+          twitchLiveState.uptime = "";
+        }
+
+        twitchLiveState.lastChecked = new Date();
+
+        if (indicator) {
+          if (twitchLiveState.isLive) {
+            indicator.className = "text-xs px-2.5 py-1 rounded-full bg-red-950 text-red-300 border border-red-500/50 flex items-center gap-1.5 font-bold animate-pulse";
+            indicator.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-500"></span> AO VIVO (${twitchLiveState.uptime})`;
+          } else {
+            indicator.className = "text-xs px-2.5 py-1 rounded-full bg-zinc-900 text-zinc-400 border border-zinc-700 flex items-center gap-1.5 font-medium";
+            indicator.innerHTML = `<span class="w-2 h-2 rounded-full bg-zinc-600"></span> Canal Offline`;
+          }
+        }
+
+        if (lastCheckLabel) {
+          const timeStr = twitchLiveState.lastChecked.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          lastCheckLabel.innerText = `Última checagem: ${timeStr} · ${twitchLiveState.isLive ? 'Ao vivo!' : 'Offline'}`;
+        }
+
+        if (isManualClick) {
+          mostrarToast(twitchLiveState.isLive ? "Canal está AO VIVO na Twitch!" : "Canal está Offline no momento.");
+        }
+
+      } catch (err) {
+        console.warn("Erro ao checar live:", err);
+        twitchLiveState.isLive = false;
+        if (indicator) {
+          indicator.className = "text-xs px-2.5 py-1 rounded-full bg-zinc-900 text-zinc-400 border border-zinc-700 flex items-center gap-1.5 font-medium";
+          indicator.innerHTML = `<span class="w-2 h-2 rounded-full bg-zinc-600"></span> Offline (Erro rede)`;
+        }
+      }
+
+      atualizarBadgeLiveUI();
+      renderizarTudo();
+    }
+
+    function atualizarBadgeLiveUI() {
+      const container = document.getElementById('statusBadgeContainer');
+      const badgeLink = document.getElementById('statusBadgeLink');
+      const txtStatusTag = document.getElementById('txtStatusTag');
+
+      if (appConfig.autoDetectLive && twitchLiveState.isLive) {
+        container.classList.remove('hidden');
+        const channel = (appConfig.twitchUsername || 'omarotto').trim().toLowerCase();
+        badgeLink.href = `https://twitch.tv/${channel}`;
+        
+        let label = appConfig.statusTag || "🔴 AO VIVO NA TWITCH";
+        if (twitchLiveState.uptime) {
+          label += ` (${twitchLiveState.uptime})`;
+        }
+        txtStatusTag.innerText = label;
+      } else {
+        // Se estiver offline ou desligado, ESCONDE completamente
+        container.classList.add('hidden');
+      }
+    }
+
+    function carregarConfiguracao() {
+      const salvo = localStorage.getItem('omarotto_linktree_cfg_v2');
+      if (salvo) {
+        try {
+          appConfig = JSON.parse(salvo);
+          appConfig = Object.assign({}, DEFAULT_CONFIG, appConfig);
+        } catch (e) {
+          appConfig = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+        }
+      } else {
+        appConfig = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+      }
+    }
+
+    function salvarConfiguracao() {
+      localStorage.setItem('omarotto_linktree_cfg_v2', JSON.stringify(appConfig));
+      mostrarToast("Alterações salvas com sucesso!");
+    }
+
+    function salvarTudoManualmente() {
+      salvarConfiguracao();
+      renderizarTudo();
+      verificarStatusTwitch(false);
+    }
+
+    function restaurarPadrao() {
+      if (confirm("Deseja restaurar todas as configurações para o padrão original? Seus links customizados serão resetados.")) {
+        appConfig = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+        salvarConfiguracao();
+        preencherFormularioAdmin();
+        renderizarTudo();
+        verificarStatusTwitch(false);
+      }
+    }
+
+    function mostrarToast(mensagem) {
+      const toast = document.getElementById('toastNotification');
+      const toastMsg = document.getElementById('toastMsg');
+      toastMsg.innerText = mensagem;
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-24', 'opacity-0');
+      }, 2800);
+    }
+
+    function switchView(mode) {
+      const viewPrev = document.getElementById('sectionPreview');
+      const viewAdmin = document.getElementById('sectionAdmin');
+      const btnPrev = document.getElementById('navBtnPreview');
+      const btnAdmin = document.getElementById('navBtnAdmin');
+
+      if (mode === 'preview') {
+        viewPrev.classList.remove('hidden');
+        viewAdmin.classList.add('hidden');
+
+        btnPrev.className = "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 bg-purple-600 text-white shadow-sm shadow-purple-600/50";
+        btnAdmin.className = "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 text-zinc-400 hover:text-white";
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        viewPrev.classList.add('hidden');
+        viewAdmin.classList.remove('hidden');
+
+        btnAdmin.className = "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 bg-purple-600 text-white shadow-sm shadow-purple-600/50";
+        btnPrev.className = "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 text-zinc-400 hover:text-white";
+        renderizarMiniPreviewAdmin();
+      }
+    }
+
+    function rolarParaExportacao() {
+      setTimeout(() => {
+        const el = document.getElementById('exportSection');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+
+    function preencherFormularioAdmin() {
+      document.getElementById('cfgDisplayName').value = appConfig.displayName || "";
+      document.getElementById('cfgUsername').value = appConfig.username || "";
+      document.getElementById('cfgTwitchUsername').value = appConfig.twitchUsername || "";
+      document.getElementById('cfgAutoDetectLive').value = appConfig.autoDetectLive ? "true" : "false";
+      document.getElementById('cfgAvatarUrl').value = appConfig.avatarUrl || "";
+      document.getElementById('cfgBio').value = appConfig.bio || "";
+      document.getElementById('cfgStatusTag').value = appConfig.statusTag || "🔴 AO VIVO NA TWITCH";
+      
+      document.getElementById('cfgPrimaryColor').value = appConfig.primaryColor || "#9146FF";
+      document.getElementById('cfgPrimaryColorHex').innerText = appConfig.primaryColor || "#9146FF";
+      
+      document.getElementById('cfgBgColor').value = appConfig.bgColor || "#0e0e10";
+      document.getElementById('cfgBgColorHex').innerText = appConfig.bgColor || "#0e0e10";
+      
+      document.getElementById('cfgButtonRadius').value = appConfig.buttonRadius || "rounded-2xl";
+      document.getElementById('cfgButtonStyle').value = appConfig.buttonStyle || "glass";
+
+      renderizarListaSocialAdmin();
+      renderizarListaLinksAdmin();
+    }
+
+    function updateConfigField(field, value) {
+      appConfig[field] = value;
+      if (field === 'primaryColor') document.getElementById('cfgPrimaryColorHex').innerText = value;
+      if (field === 'bgColor') document.getElementById('cfgBgColorHex').innerText = value;
+      
+      salvarConfiguracao();
+      renderizarTudo();
+
+      if (field === 'twitchUsername' || field === 'autoDetectLive') {
+        verificarStatusTwitch(false);
+      }
+    }
+
+    function tratarUploadAvatar(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          appConfig.avatarUrl = e.target.result;
+          document.getElementById('cfgAvatarUrl').value = "Imagem local carregada";
+          salvarConfiguracao();
+          renderizarTudo();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function renderizarTudo() {
+      renderizarPaginaPublica();
+      renderizarMiniPreviewAdmin();
+    }
+
+    function getButtonStyleClasses(isHighlight = false, isLiveTwitch = false) {
+      const radius = appConfig.buttonRadius || "rounded-2xl";
+      const style = appConfig.buttonStyle || "glass";
+
+      let baseClasses = `relative w-full p-4 flex items-center justify-between text-left transition-all duration-300 group cursor-pointer ${radius} `;
+      
+      if (isLiveTwitch) {
+        baseClasses += `border-2 border-red-500 animate-live-glow bg-red-950/40 text-white shadow-xl shadow-red-900/40 `;
+        return baseClasses;
+      }
+
+      if (isHighlight) {
+        baseClasses += `border-2 animate-pulse-glow `;
+      } else {
+        baseClasses += `border hover:scale-[1.015] active:scale-[0.99] `;
+      }
+
+      if (style === 'glass') {
+        baseClasses += isHighlight 
+          ? 'bg-purple-950/40 border-purple-500 text-white shadow-xl shadow-purple-900/30' 
+          : 'bg-[#18181b]/70 hover:bg-[#202025]/90 border-zinc-800/80 hover:border-purple-500/40 text-zinc-100 shadow-lg';
+      } else if (style === 'solid') {
+        baseClasses += isHighlight 
+          ? 'bg-purple-600 border-purple-400 text-white shadow-lg' 
+          : 'bg-zinc-800/95 hover:bg-zinc-700 border-zinc-700/60 text-white shadow';
+      } else if (style === 'outline') {
+        baseClasses += isHighlight 
+          ? 'bg-transparent border-purple-500 text-purple-300 hover:bg-purple-950/20' 
+          : 'bg-transparent hover:bg-zinc-800/40 border-zinc-700 text-zinc-200';
+      } else if (style === 'neon') {
+        baseClasses += isHighlight 
+          ? 'bg-black border-purple-400 text-white shadow-[0_0_20px_rgba(145,70,255,0.7)]' 
+          : 'bg-black hover:bg-zinc-900 border-purple-600/40 hover:border-purple-500 text-white';
+      }
+
+      return baseClasses;
+    }
+
+    function renderizarPaginaPublica() {
+      const canvas = document.getElementById('publicPageCanvas');
+      canvas.style.backgroundColor = appConfig.bgColor || '#0e0e10';
+
+      atualizarBadgeLiveUI();
+
+      // Profile Info
+      document.getElementById('publicDisplayName').innerHTML = `<span>${escapeHtml(appConfig.displayName)}</span>`;
+      document.getElementById('publicUsername').innerText = appConfig.username;
+      document.getElementById('publicBioText').innerText = appConfig.bio;
+      document.getElementById('publicAvatarImg').src = appConfig.avatarUrl || 'https://placehold.co/160x160/1a1a24/9146FF?text=OM';
+
+      // Dynamic primary color accent for elements
+      const primaryColor = appConfig.primaryColor || '#9146FF';
+      document.getElementById('publicUsername').style.color = primaryColor;
+      document.getElementById('verifiedBadge').style.backgroundColor = primaryColor;
+      document.getElementById('avatarGlow').style.background = `linear-gradient(135deg, ${primaryColor}, #4f46e5)`;
+
+      // Render Social Icons Row
+      const socialContainer = document.getElementById('publicSocialsRow');
+      socialContainer.innerHTML = '';
+      (appConfig.socials || []).filter(s => s.active && s.url).forEach(soc => {
+        const a = document.createElement('a');
+        a.href = soc.url;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        a.className = "w-10 h-10 rounded-xl bg-zinc-900/90 border border-zinc-800 hover:border-purple-500/70 hover:bg-purple-600/20 text-zinc-300 hover:text-white flex items-center justify-center text-lg transition duration-200 transform hover:-translate-y-0.5 shadow-sm";
+        a.title = soc.name;
+        a.innerHTML = `<i class="${soc.icon}"></i>`;
+        socialContainer.appendChild(a);
+      });
+
+      // Render Links
+      const linksContainer = document.getElementById('publicLinksContainer');
+      linksContainer.innerHTML = '';
+      
+      const channel = (appConfig.twitchUsername || "").trim().toLowerCase();
+
+      (appConfig.links || []).filter(l => l.active).forEach(item => {
+        const isTwitchLink = (item.url && item.url.toLowerCase().includes('twitch.tv/')) || (item.icon && item.icon.includes('twitch'));
+        const isLiveNow = appConfig.autoDetectLive && twitchLiveState.isLive && isTwitchLink;
+
+        const linkBtn = document.createElement('a');
+        linkBtn.href = item.url;
+        linkBtn.target = "_blank";
+        linkBtn.rel = "noopener noreferrer";
+        linkBtn.className = getButtonStyleClasses(item.highlight, isLiveNow);
+        
+        let badgeHtml = '';
+        if (isLiveNow) {
+          badgeHtml = `<span class="px-2 py-0.5 text-[10px] font-black uppercase tracking-wider rounded-md bg-red-600 text-white shadow-sm border border-red-400/50 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span> AO VIVO</span>`;
+        } else if (item.badge) {
+          badgeHtml = `<span class="px-2 py-0.5 text-[10px] font-black uppercase tracking-wider rounded-md bg-purple-600/80 text-white shadow-sm border border-purple-400/30">${escapeHtml(item.badge)}</span>`;
+        }
+
+        let subtitleText = item.subtitle || '';
+        if (isLiveNow && twitchLiveState.uptime) {
+          subtitleText = `🔴 Ao vivo agora há ${twitchLiveState.uptime}! Clique para assistir.`;
+        }
+
+        linkBtn.innerHTML = `
+          <div class="flex items-center gap-3.5 min-w-0 pr-2">
+            <div class="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center text-lg ${isLiveNow ? 'bg-red-600 text-white' : (item.highlight ? 'bg-purple-600 text-white' : 'bg-zinc-800/80 text-purple-400 group-hover:text-purple-300 group-hover:bg-purple-600/30')} transition duration-200">
+              <i class="${item.icon || 'fa-solid fa-link'}"></i>
+            </div>
+            <div class="min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-sm text-zinc-100 group-hover:text-white truncate">${escapeHtml(item.title)}</span>
+                ${badgeHtml}
+              </div>
+              ${subtitleText ? `<p class="text-xs ${isLiveNow ? 'text-red-200 font-medium' : 'text-zinc-400'} truncate mt-0.5">${escapeHtml(subtitleText)}</p>` : ''}
+            </div>
+          </div>
+          <div class="flex-shrink-0 ${isLiveNow ? 'text-red-300' : 'text-zinc-500'} group-hover:text-zinc-200 group-hover:translate-x-0.5 transition duration-200 pl-2">
+            <i class="fa-solid fa-chevron-right text-xs"></i>
+          </div>
+        `;
+        linksContainer.appendChild(linkBtn);
+      });
+    }
+
+    function renderizarMiniPreviewAdmin() {
+      const container = document.getElementById('adminMiniPreview');
+      if (!container) return;
+
+      const isLiveNow = appConfig.autoDetectLive && twitchLiveState.isLive;
+
+      let socialsHtml = '';
+      (appConfig.socials || []).filter(s => s.active && s.url).forEach(soc => {
+        socialsHtml += `
+          <a href="${soc.url}" target="_blank" class="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-center justify-center text-xs">
+            <i class="${soc.icon}"></i>
+          </a>
+        `;
+      });
+
+      let linksHtml = '';
+      (appConfig.links || []).filter(l => l.active).forEach(item => {
+        const isTwitchLink = (item.url && item.url.toLowerCase().includes('twitch.tv/')) || (item.icon && item.icon.includes('twitch'));
+        const linkIsLive = isLiveNow && isTwitchLink;
+
+        linksHtml += `
+          <div class="w-full p-2.5 rounded-xl border ${linkIsLive ? 'border-red-500 bg-red-950/40 text-white' : (item.highlight ? 'border-purple-500 bg-purple-950/30' : 'border-zinc-800 bg-zinc-900/60')} flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2 min-w-0 pr-1">
+              <div class="w-7 h-7 rounded-lg ${linkIsLive ? 'bg-red-600 text-white' : (item.highlight ? 'bg-purple-600 text-white' : 'bg-zinc-800 text-purple-400')} flex items-center justify-center flex-shrink-0 text-[11px]">
+                <i class="${item.icon}"></i>
+              </div>
+              <div class="min-w-0 truncate">
+                <div class="font-bold text-white truncate text-[11px] flex items-center gap-1">
+                  <span>${escapeHtml(item.title)}</span>
+                  ${linkIsLive ? '<span class="text-[8px] bg-red-600 px-1 rounded text-white font-black">AO VIVO</span>' : ''}
+                </div>
+                <div class="text-[9px] text-zinc-400 truncate">${linkIsLive ? 'Transmitindo agora!' : escapeHtml(item.subtitle || '')}</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-right text-[10px] text-zinc-500"></i>
+          </div>
+        `;
+      });
+
+      container.innerHTML = `
+        <div class="flex flex-col items-center w-full">
+          ${isLiveNow ? `
+            <div class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-red-950 border border-red-500 text-red-200 mb-2 flex items-center gap-1 animate-pulse">
+              <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> ${escapeHtml(appConfig.statusTag || 'AO VIVO NA TWITCH')}
+            </div>
+          ` : ''}
+          <img src="${appConfig.avatarUrl || 'https://placehold.co/100x100'}" class="w-16 h-16 rounded-full border border-purple-500/80 shadow mb-2 object-cover" />
+          <h4 class="font-bold text-sm text-white">${escapeHtml(appConfig.displayName)}</h4>
+          <span class="text-[11px] font-mono text-purple-400">${escapeHtml(appConfig.username)}</span>
+          <p class="text-[10px] text-zinc-400 text-center mt-1.5 line-clamp-2 px-2">${escapeHtml(appConfig.bio)}</p>
+
+          <div class="flex gap-1.5 my-3">
+            ${socialsHtml}
+          </div>
+
+          <div class="w-full space-y-2 mt-1">
+            ${linksHtml}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderizarListaSocialAdmin() {
+      const container = document.getElementById('adminSocialsList');
+      container.innerHTML = '';
+
+      (appConfig.socials || []).forEach((soc, idx) => {
+        const item = document.createElement('div');
+        item.className = 'bg-zinc-950 border border-zinc-800 rounded-xl p-3 flex flex-col gap-2';
+        item.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-zinc-200 flex items-center gap-2">
+              <i class="${soc.icon} text-purple-400"></i> ${soc.name}
+            </span>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" ${soc.active ? 'checked' : ''} onchange="toggleSocialStatus(${idx}, this.checked)" class="sr-only peer">
+              <div class="w-7 h-4 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-purple-600"></div>
+            </label>
+          </div>
+          <input type="text" value="${soc.url}" oninput="updateSocialUrl(${idx}, this.value)" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-zinc-200 focus:outline-none focus:border-purple-500" placeholder="https://...">
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function toggleSocialStatus(index, val) {
+      appConfig.socials[index].active = val;
+      salvarConfiguracao();
+      renderizarTudo();
+    }
+
+    function updateSocialUrl(index, val) {
+      appConfig.socials[index].url = val;
+      salvarConfiguracao();
+      renderizarTudo();
+    }
+
+    function renderizarListaLinksAdmin() {
+      const container = document.getElementById('adminLinksList');
+      container.innerHTML = '';
+
+      if (!appConfig.links || appConfig.links.length === 0) {
+        container.innerHTML = `<div class="p-6 text-center text-xs text-zinc-500 bg-zinc-950 rounded-2xl border border-zinc-800">Nenhum link adicionado ainda. Clique no botão acima para adicionar seu primeiro link!</div>`;
+        return;
+      }
+
+      appConfig.links.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = `p-4 rounded-2xl border transition-all duration-200 ${item.highlight ? 'bg-purple-950/20 border-purple-500/60' : 'bg-zinc-950 border-zinc-800'}`;
+        card.innerHTML = `
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3 border-b border-zinc-800/80 pb-2.5">
+            <div class="flex items-center gap-2">
+              <button onclick="abrirModalIcone('${item.id}')" title="Trocar Ícone" class="w-8 h-8 rounded-lg bg-zinc-800 hover:bg-purple-600 hover:text-white text-purple-400 flex items-center justify-center text-sm transition border border-zinc-700">
+                <i class="${item.icon || 'fa-solid fa-link'}"></i>
+              </button>
+              <span class="text-xs font-bold text-white tracking-wide truncate max-w-[200px]">${escapeHtml(item.title || 'Novo Link')}</span>
+              ${item.highlight ? `<span class="text-[9px] px-1.5 py-0.5 rounded bg-purple-600 text-white font-mono uppercase">Destaque</span>` : ''}
+            </div>
+
+            <!-- Controls (Order, Toggle, Delete) -->
+            <div class="flex items-center gap-1.5 self-end sm:self-auto">
+              <button onclick="moverLink(${index}, -1)" ${index === 0 ? 'disabled class="opacity-30 p-1.5 text-zinc-500"' : 'class="p-1.5 text-zinc-400 hover:text-white rounded hover:bg-zinc-800 transition"'} title="Mover para cima">
+                <i class="fa-solid fa-arrow-up text-xs"></i>
+              </button>
+              <button onclick="moverLink(${index}, 1)" ${index === appConfig.links.length - 1 ? 'disabled class="opacity-30 p-1.5 text-zinc-500"' : 'class="p-1.5 text-zinc-400 hover:text-white rounded hover:bg-zinc-800 transition"'} title="Mover para baixo">
+                <i class="fa-solid fa-arrow-down text-xs"></i>
+              </button>
+              <button onclick="alternarDestaqueLink(${index})" class="px-2 py-1 text-[11px] rounded font-medium ${item.highlight ? 'bg-purple-600 text-white' : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'} transition ml-1" title="Alternar Efeito Glow">
+                <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Glow
+              </button>
+              <button onclick="excluirLink(${index})" class="p-1.5 text-zinc-500 hover:text-red-400 rounded hover:bg-red-950/30 transition ml-1" title="Excluir link">
+                <i class="fa-solid fa-trash-can text-xs"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Inputs -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] font-medium text-zinc-400 mb-0.5">Título do Botão</label>
+              <input type="text" value="${escapeHtml(item.title)}" oninput="atualizarLinkCampo(${index}, 'title', this.value)" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-purple-500">
+            </div>
+            <div>
+              <label class="block text-[11px] font-medium text-zinc-400 mb-0.5">URL de Destino</label>
+              <input type="text" value="${escapeHtml(item.url)}" oninput="atualizarLinkCampo(${index}, 'url', this.value)" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-purple-500">
+            </div>
+            <div>
+              <label class="block text-[11px] font-medium text-zinc-400 mb-0.5">Subtítulo descritivo (Opcional)</label>
+              <input type="text" value="${escapeHtml(item.subtitle || '')}" oninput="atualizarLinkCampo(${index}, 'subtitle', this.value)" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-purple-500" placeholder="Ex: Lives todos os dias">
+            </div>
+            <div>
+              <label class="block text-[11px] font-medium text-zinc-400 mb-0.5">Badge/Selo (Ex: NOVO, VIP, AO VIVO)</label>
+              <input type="text" value="${escapeHtml(item.badge || '')}" oninput="atualizarLinkCampo(${index}, 'badge', this.value)" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-purple-500" placeholder="Ex: AO VIVO">
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function adicionarNovoLink() {
+      const novo = {
+        id: "link_" + Date.now(),
+        title: "Novo Link Customizado",
+        subtitle: "Breve descrição do destino",
+        url: "https://",
+        icon: "fa-solid fa-link",
+        highlight: false,
+        badge: "",
+        active: true
+      };
+      appConfig.links.push(novo);
+      salvarConfiguracao();
+      renderizarListaLinksAdmin();
+      renderizarTudo();
+    }
+
+    function atualizarLinkCampo(index, campo, valor) {
+      appConfig.links[index][campo] = valor;
+      salvarConfiguracao();
+      renderizarTudo();
+    }
+
+    function alternarDestaqueLink(index) {
+      appConfig.links[index].highlight = !appConfig.links[index].highlight;
+      salvarConfiguracao();
+      renderizarListaLinksAdmin();
+      renderizarTudo();
+    }
+
+    function moverLink(index, direcao) {
+      const novoIndex = index + direcao;
+      if (novoIndex < 0 || novoIndex >= appConfig.links.length) return;
+      const item = appConfig.links.splice(index, 1)[0];
+      appConfig.links.splice(novoIndex, 0, item);
+      salvarConfiguracao();
+      renderizarListaLinksAdmin();
+      renderizarTudo();
+    }
+
+    function excluirLink(index) {
+      if (confirm("Remover este link permanentemente?")) {
+        appConfig.links.splice(index, 1);
+        salvarConfiguracao();
+        renderizarListaLinksAdmin();
+        renderizarTudo();
+      }
+    }
+
+    function popularGradeIcones() {
+      const grid = document.getElementById('quickIconsGrid');
+      grid.innerHTML = '';
+      POPULAR_ICONS.forEach(iconClass => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'w-10 h-10 rounded-xl bg-zinc-950 border border-zinc-800 hover:border-purple-500 hover:bg-purple-600/30 text-zinc-300 hover:text-white flex items-center justify-center text-sm transition';
+        btn.innerHTML = `<i class="${iconClass}"></i>`;
+        btn.onclick = () => selecionarIcone(iconClass);
+        grid.appendChild(btn);
+      });
+    }
+
+    function abrirModalIcone(linkId) {
+      iconPickerTargetLinkId = linkId;
+      document.getElementById('iconModal').classList.remove('hidden');
+      document.getElementById('iconModal').classList.add('flex');
+    }
+
+    function fecharModalIcone() {
+      document.getElementById('iconModal').classList.add('hidden');
+      document.getElementById('iconModal').classList.remove('flex');
+      iconPickerTargetLinkId = null;
+    }
+
+    function selecionarIcone(classe) {
+      if (iconPickerTargetLinkId) {
+        const target = appConfig.links.find(l => l.id === iconPickerTargetLinkId);
+        if (target) {
+          target.icon = classe;
+          salvarConfiguracao();
+          renderizarListaLinksAdmin();
+          renderizarTudo();
+        }
+      }
+      fecharModalIcone();
+    }
+
+    function confirmarIconeCustom() {
+      const input = document.getElementById('customIconClassInput');
+      const val = input.value.trim();
+      if (val) {
+        selecionarIcone(val);
+        input.value = '';
+      }
+    }
+
+    function baixarBackupJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appConfig, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `links-omarotto-backup-${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      mostrarToast("Backup JSON gerado!");
+    }
+
+    function importarBackupJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (imported.displayName || imported.links) {
+            appConfig = Object.assign({}, DEFAULT_CONFIG, imported);
+            salvarConfiguracao();
+            preencherFormularioAdmin();
+            renderizarTudo();
+            verificarStatusTwitch(false);
+            mostrarToast("Configuração importada com sucesso!");
+          } else {
+            mostrarToast("Arquivo JSON inválido.");
+          }
+        } catch (err) {
+          mostrarToast("Erro ao processar JSON.");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function copiarLinkPublico() {
+      const dummy = document.createElement("input");
+      document.body.appendChild(dummy);
+      dummy.value = window.location.href.split('#')[0];
+      dummy.select();
+      document.execCommand("copy");
+      document.body.removeChild(dummy);
+      mostrarToast("Link copiado para a área de transferência!");
+    }
+
+    function gerarCodigoHTMLPronto() {
+      const cfg = appConfig;
+      const channel = (cfg.twitchUsername || 'omarotto').trim().toLowerCase();
+
+      let socialsHtml = '';
+      (cfg.socials || []).filter(s => s.active && s.url).forEach(s => {
+        socialsHtml += `
+      <a href="${s.url}" target="_blank" rel="noopener noreferrer" style="width: 42px; height: 42px; border-radius: 12px; background: #18181b; border: 1px solid #27272a; color: #d4d4d8; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; font-size: 18px; transition: 0.2s;" onmouseover="this.style.color='#fff'; this.style.borderColor='${cfg.primaryColor}'" onmouseout="this.style.color='#d4d4d8'; this.style.borderColor='#27272a'">
+        <i class="${s.icon}"></i>
+      </a>`;
+      });
+
+      let linksHtml = '';
+      (cfg.links || []).filter(l => l.active).forEach(l => {
+        const isTwitch = (l.url && l.url.toLowerCase().includes('twitch.tv/')) || (l.icon && l.icon.includes('twitch'));
+        const isHl = l.highlight;
+        const bg = isHl ? 'rgba(88, 28, 135, 0.35)' : '#18181b';
+        const border = isHl ? cfg.primaryColor : '#27272a';
+        const shadow = isHl ? `0 0 20px rgba(145, 70, 255, 0.4)` : 'none';
+
+        linksHtml += `
+      <a id="${isTwitch ? 'twitchMainBtn' : ''}" href="${l.url}" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: ${bg}; border: 1px solid ${border}; border-radius: 16px; text-decoration: none; box-shadow: ${shadow}; transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        <div style="display: flex; align-items: center; gap: 14px; min-width: 0;">
+          <div id="${isTwitch ? 'twitchIconBox' : ''}" style="width: 40px; height: 40px; border-radius: 12px; background: ${isHl ? cfg.primaryColor : '#27272a'}; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">
+            <i class="${l.icon}"></i>
+          </div>
+          <div style="min-width: 0; text-align: left;">
+            <div style="font-weight: 700; font-size: 14px; color: #fff;">${escapeHtml(l.title)} <span id="${isTwitch ? 'twitchBadgeTag' : ''}">${l.badge ? `<span style="font-size: 10px; font-weight: 800; background: ${cfg.primaryColor}; color: #fff; padding: 2px 6px; border-radius: 4px; margin-left: 6px;">${escapeHtml(l.badge)}</span>` : ''}</span></div>
+            <div id="${isTwitch ? 'twitchSubText' : ''}" style="font-size: 12px; color: #a1a1aa; margin-top: 2px;">${escapeHtml(l.subtitle || '')}</div>
+          </div>
+        </div>
+        <div style="color: #71717a; font-size: 12px; padding-left: 8px;"><i class="fa-solid fa-chevron-right"></i></div>
+      </a>`;
+      });
+
+      return `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${escapeHtml(cfg.displayName)} | Bio & Links</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: ${cfg.bgColor}; color: #fff; font-family: 'Inter', sans-serif; display: flex; justify-content: center; min-height: 100vh; padding: 30px 16px; }
+    .card { width: 100%; max-width: 520px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .avatar { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 3px solid ${cfg.primaryColor}; box-shadow: 0 0 25px rgba(145, 70, 255, 0.4); margin-bottom: 16px; }
+    
+    @keyframes liveGlow {
+      0%, 100% { box-shadow: 0 0 16px rgba(239, 68, 68, 0.6); }
+      50% { box-shadow: 0 0 30px rgba(239, 68, 68, 0.95); }
+    }
+    .live-pulse { animation: liveGlow 2s infinite ease-in-out; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    
+    <!-- Real-time Live Badge (Auto-hidden when offline) -->
+    <div id="liveBadgeWrap" style="margin-bottom: 16px; display: none;">
+      <a href="https://twitch.tv/${channel}" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; border-radius: 9999px; font-size: 12px; font-weight: 800; background: rgba(127, 29, 29, 0.85); border: 1px solid rgba(239, 68, 68, 0.6); color: #fecaca; text-decoration: none; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);" class="live-pulse">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444;"></span>
+        <span id="liveBadgeText">🔴 AO VIVO NA TWITCH</span>
+      </a>
+    </div>
+
+    <img src="${cfg.avatarUrl}" alt="Avatar" class="avatar">
+    <h1 style="font-size: 22px; font-weight: 800;">${escapeHtml(cfg.displayName)}</h1>
+    <p style="font-size: 14px; font-weight: 600; color: ${cfg.primaryColor}; margin-top: 4px;">${escapeHtml(cfg.username)}</p>
+    <p style="font-size: 13px; color: #a1a1aa; max-width: 420px; margin: 12px 0 20px 0; line-height: 1.5; white-space: pre-line;">${escapeHtml(cfg.bio)}</p>
+
+    <div style="display: flex; gap: 10px; margin-bottom: 24px;">
+      ${socialsHtml}
+    </div>
+
+    <div style="width: 100%; display: flex; flex-direction: column; gap: 12px;">
+      ${linksHtml}
+    </div>
+
+    <footer style="margin-top: 40px; font-size: 11px; color: #52525b;">
+      © ${new Date().getFullYear()} ${escapeHtml(cfg.displayName)} · Todos os direitos reservados.
+    </footer>
+  </main>
+
+  <script>
+    // Real-time Twitch Live checker (DecAPI proxy)
+    const channelName = "${channel}";
+    const autoDetect = ${cfg.autoDetectLive ? 'true' : 'false'};
+
+    async function checkTwitchLive() {
+      if (!autoDetect || !channelName) return;
+      try {
+        const res = await fetch('https://decapi.me/twitch/uptime/' + channelName);
+        const text = await res.text();
+        const lower = text.toLowerCase();
+        const isOffline = lower.includes('offline') || lower.includes('user not found') || lower.includes('not found') || lower.includes('error');
+        
+        const badgeWrap = document.getElementById('liveBadgeWrap');
+        const badgeText = document.getElementById('liveBadgeText');
+        const twitchBtn = document.getElementById('twitchMainBtn');
+        const twitchIconBox = document.getElementById('twitchIconBox');
+        const twitchBadgeTag = document.getElementById('twitchBadgeTag');
+        const twitchSubText = document.getElementById('twitchSubText');
+
+        if (!isOffline && res.ok) {
+          // ESTÁ AO VIVO DE VERDADE
+          if (badgeWrap) badgeWrap.style.display = 'block';
+          if (badgeText) badgeText.innerText = '🔴 AO VIVO NA TWITCH (' + text.trim() + ')';
+          
+          if (twitchBtn) {
+            twitchBtn.style.borderColor = '#ef4444';
+            twitchBtn.style.background = 'rgba(127, 29, 29, 0.4)';
+            twitchBtn.classList.add('live-pulse');
+          }
+          if (twitchIconBox) twitchIconBox.style.background = '#ef4444';
+          if (twitchBadgeTag) twitchBadgeTag.innerHTML = '<span style="font-size: 10px; font-weight: 800; background: #ef4444; color: #fff; padding: 2px 6px; border-radius: 4px; margin-left: 6px;">AO VIVO</span>';
+          if (twitchSubText) {
+            twitchSubText.innerText = 'Transmitindo agora! Clique para assistir.';
+            twitchSubText.style.color = '#fca5a5';
+          }
+        } else {
+          // OFFLINE - Esconde o badge
+          if (badgeWrap) badgeWrap.style.display = 'none';
+        }
+      } catch (e) {
+        // Fallback silencioso
+      }
+    }
+    checkTwitchLive();
+    setInterval(checkTwitchLive, 60000);
+  <\/script>
+</body>
+</html>`;
+    }
+
+    function copiarHTMLFinal() {
+      const code = gerarCodigoHTMLPronto();
+      const dummy = document.createElement("textarea");
+      document.body.appendChild(dummy);
+      dummy.value = code;
+      dummy.select();
+      document.execCommand("copy");
+      document.body.removeChild(dummy);
+      mostrarToast("HTML com verificação em tempo real copiado!");
+    }
+
+    function baixarHTMLFinal() {
+      const code = gerarCodigoHTMLPronto();
+      const dataStr = "data:text/html;charset=utf-8," + encodeURIComponent(code);
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `index.html`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      mostrarToast("index.html com live detector baixado!");
+    }
+
+    function escapeHtml(string) {
+      if (!string) return '';
+      return String(string)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+  </script>
+</body>
+</html>
