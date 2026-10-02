@@ -38,8 +38,8 @@
     ::-webkit-scrollbar-thumb:hover { background: #9146FF; }
 
     @keyframes pulseGlow {
-      0%, 100% { box-shadow: 0 0 15px rgba(145, 70, 255, 0.4), inset 0 0 10px rgba(145, 70, 255, 0.2); }
-      50% { box-shadow: 0 0 28px rgba(145, 70, 255, 0.8), inset 0 0 15px rgba(145, 70, 255, 0.4); }
+      0%, 100% { box-shadow: 0 0 15px rgba(var(--glow-rgb, 145,70,255), 0.4), inset 0 0 10px rgba(var(--glow-rgb, 145,70,255), 0.2); }
+      50% { box-shadow: 0 0 28px rgba(var(--glow-rgb, 145,70,255), 0.8), inset 0 0 15px rgba(var(--glow-rgb, 145,70,255), 0.4); }
     }
     .animate-pulse-glow { animation: pulseGlow 2.5s infinite ease-in-out; }
 
@@ -419,12 +419,12 @@
             <div class="flex items-center justify-between">
               <div>
                 <h3 class="text-sm font-semibold uppercase tracking-wider text-purple-400 flex items-center gap-2">
-                  <i class="fa-solid fa-link"></i> Gerenciador de Links Principais
+                  <i class="fa-solid fa-layer-group"></i> Gerenciador de Itens
                 </h3>
-                <p class="text-xs text-zinc-400">Adicione botões, canais, lojas, campanhas e destaque com animações.</p>
+                <p class="text-xs text-zinc-400">Adicione botões, canais, lojas, campanhas, banners e destaque com animações.</p>
               </div>
               <button onclick="adicionarNovoLink()" class="px-3 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition flex items-center gap-1.5 shadow-md shadow-emerald-700/30">
-                <i class="fa-solid fa-plus"></i> Novo Link
+                <i class="fa-solid fa-plus"></i> Novo Item
               </button>
             </div>
             <div id="adminLinksList" class="space-y-3.5"></div>
@@ -528,11 +528,11 @@
         { id: "s_tiktok", name: "TikTok", icon: "fa-brands fa-tiktok", url: "https://tiktok.com/@omarotto", active: false }
       ],
       links: [
-        { id: "link_twitch_main", title: "Canal de Lives na Twitch", subtitle: "Transmissões quase todos os dias às 19h", url: "https://twitch.tv/omarotto", icon: "fa-brands fa-twitch", highlight: false, badge: "", active: true },
-        { id: "link_discord", title: "Comunidade no Discord", subtitle: "Participe de sorteios, bate-papo e novidades", url: "https://discord.gg", icon: "fa-brands fa-discord", highlight: false, badge: "VIP", active: true },
-        { id: "link_widgets", title: "Widgets Gratuitos para OBS", subtitle: "Widgets de jogo atual, metas e avisos de live", url: "https://github.com/jackmarotto/Streamer-Bio-and-pannels", icon: "fa-solid fa-gamepad", highlight: false, badge: "Novo", active: true },
-        { id: "link_setup", title: "Setup Gamer & Equipamentos", subtitle: "Periféricos, microfone e peças do PC recomendadas", url: "https://amazon.com.br", icon: "fa-solid fa-headset", highlight: false, badge: "", active: true },
-        { id: "link_pix", title: "Mande uma mensagem / Pix", subtitle: "Apoie a produção de conteúdo do canal", url: "https://tipa.ai", icon: "fa-solid fa-qrcode", highlight: false, badge: "Apoio", active: true }
+        { id: "link_twitch_main", title: "Canal de Lives na Twitch", subtitle: "Transmissões quase todos os dias às 19h", url: "https://twitch.tv/omarotto", icon: "fa-brands fa-twitch", highlight: false, badge: "", active: true , glowColor: "", imageUrl: "", imagePosition: "left", imageSize: "md" },
+        { id: "link_discord", title: "Comunidade no Discord", subtitle: "Participe de sorteios, bate-papo e novidades", url: "https://discord.gg", icon: "fa-brands fa-discord", highlight: false, badge: "VIP", active: true , glowColor: "", imageUrl: "", imagePosition: "left", imageSize: "md" },
+        { id: "link_widgets", title: "Widgets Gratuitos para OBS", subtitle: "Widgets de jogo atual, metas e avisos de live", url: "https://github.com/jackmarotto/Streamer-Bio-and-pannels", icon: "fa-solid fa-gamepad", highlight: false, badge: "Novo", active: true , glowColor: "", imageUrl: "", imagePosition: "left", imageSize: "md" },
+        { id: "link_setup", title: "Setup Gamer & Equipamentos", subtitle: "Periféricos, microfone e peças do PC recomendadas", url: "https://amazon.com.br", icon: "fa-solid fa-headset", highlight: false, badge: "", active: true , glowColor: "", imageUrl: "", imagePosition: "left", imageSize: "md" },
+        { id: "link_pix", title: "Mande uma mensagem / Pix", subtitle: "Apoie a produção de conteúdo do canal", url: "https://tipa.ai", icon: "fa-solid fa-qrcode", highlight: false, badge: "Apoio", active: true, glowColor: "", imageUrl: "", imagePosition: "left", imageSize: "md" }
       ]
     };
 
@@ -696,6 +696,38 @@
       });
     }
 
+    function hexToRgbTriplet(hex) {
+      let h = String(hex || '').trim().replace('#', '');
+      if (h.length === 3) h = h.split('').map(c => c + c).join('');
+      if (!/^[0-9a-fA-F]{6}$/.test(h)) return '145,70,255';
+      return `${parseInt(h.slice(0, 2), 16)}, ${parseInt(h.slice(2, 4), 16)}, ${parseInt(h.slice(4, 6), 16)}`;
+    }
+
+    function getItemGlowColor(item) {
+      return (item && item.glowColor && item.glowColor.trim()) || appConfig.primaryColor || '#9146FF';
+    }
+
+    const IMAGE_SIZE_MAP = {
+      sm: { thumb: 'w-9 h-9 rounded-lg', mockThumb: 'w-6 h-6 rounded-md', imgW: 36, imgH: 36, imgR: 8, mockImgW: 24, mockImgH: 24 },
+      md: { thumb: 'w-12 h-12 rounded-xl', mockThumb: 'w-8 h-8 rounded-lg', imgW: 48, imgH: 48, imgR: 12, mockImgW: 32, mockImgH: 32 },
+      lg: { thumb: 'w-16 h-16 rounded-2xl', mockThumb: 'w-11 h-11 rounded-xl', imgW: 64, imgH: 64, imgR: 16, mockImgW: 44, mockImgH: 44 },
+      banner: { thumb: 'w-20 h-20 rounded-2xl', mockThumb: 'w-14 h-14 rounded-xl', imgW: 80, imgH: 80, imgR: 16, mockImgW: 56, mockImgH: 56 }
+    };
+
+    function getItemImageSize(item) {
+      return IMAGE_SIZE_MAP[item && item.imageSize] || IMAGE_SIZE_MAP.md;
+    }
+
+    function aplicarGlowNoElemento(el, item) {
+      if (!el || !item || !item.highlight) return;
+      const cor = getItemGlowColor(item);
+      el.style.setProperty('--glow-rgb', hexToRgbTriplet(cor));
+      if (el.style) {
+        el.style.borderColor = cor;
+        el.style.boxShadow = `0 0 20px rgba(${hexToRgbTriplet(cor)}, 0.55)`;
+      }
+    }
+
     function getEstiloBotaoClasses(isHighlight, isLiveTwitch, isMockup = false) {
       const radius = appConfig.buttonRadius || "rounded-2xl";
       const style = appConfig.buttonStyle || "glass";
@@ -757,17 +789,59 @@
           subtitleText = `🔴 Ao vivo agora há ${twitchLiveState.uptime}!`;
         }
 
+        const temImagem = !!(item.imageUrl && item.imageUrl.trim());
+        const posicaoImg = item.imagePosition === 'top' ? 'top' : 'left';
+        const tam = getItemImageSize(item);
+        const imgSrc = escapeHtml(item.imageUrl || '');
+
+        const iconeBoxClasses = `w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center text-lg ${linkIsLive ? 'bg-red-600 text-white' : (item.highlight ? 'bg-purple-600 text-white' : 'bg-zinc-800/80 text-purple-400 group-hover:text-purple-300 group-hover:bg-purple-600/30')} transition duration-200`;
+        const iconeBoxMock = `w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center text-xs ${linkIsLive ? 'bg-red-600 text-white' : (item.highlight ? 'bg-purple-600 text-white' : 'bg-zinc-800 text-purple-400')}`;
+
+        let midiaPublica = '';
+        if (temImagem && posicaoImg === 'left') {
+          midiaPublica = `<img src="${imgSrc}" alt="" loading="lazy" onerror="this.style.display='none'" class="${tam.thumb} object-cover flex-shrink-0 my-auto transition duration-200">`;
+        } else if (temImagem && posicaoImg === 'top') {
+          midiaPublica = `<img src="${imgSrc}" alt="" loading="lazy" onerror="this.style.display='none'" class="w-full h-32 sm:h-40 object-cover flex-shrink-0">`;
+        } else {
+          midiaPublica = `<div class="${iconeBoxClasses}">${renderizarIcone(item.icon)}</div>`;
+        }
+
+        let midiaMock = '';
+        if (temImagem && posicaoImg === 'left') {
+          midiaMock = `<img src="${imgSrc}" alt="" loading="lazy" onerror="this.style.display='none'" class="${tam.mockThumb} object-cover flex-shrink-0 my-auto">`;
+        } else if (temImagem && posicaoImg === 'top') {
+          midiaMock = `<img src="${imgSrc}" alt="" loading="lazy" onerror="this.style.display='none'" class="w-full h-16 object-cover flex-shrink-0">`;
+        } else {
+          midiaMock = `<div class="${iconeBoxMock}">${renderizarIcone(item.icon)}</div>`;
+        }
+
         if (pubContainer) {
           const a = document.createElement('a');
           a.href = item.url;
           a.target = "_blank";
           a.rel = "noopener noreferrer";
           a.className = getEstiloBotaoClasses(item.highlight, linkIsLive, false);
+          const layoutTop = temImagem && posicaoImg === 'top';
+          if (layoutTop) a.classList.add('flex-col', 'items-stretch', 'justify-start', 'p-0', 'overflow-hidden');
+          aplicarGlowNoElemento(a, item);
           a.innerHTML = `
-            <div class="flex items-center gap-3.5 min-w-0 pr-2">
-              <div class="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center text-lg ${linkIsLive ? 'bg-red-600 text-white' : (item.highlight ? 'bg-purple-600 text-white' : 'bg-zinc-800/80 text-purple-400 group-hover:text-purple-300 group-hover:bg-purple-600/30')} transition duration-200">
-                ${renderizarIcone(item.icon)}
+            ${layoutTop ? `<div class="flex flex-col gap-0 w-full">
+              ${midiaPublica}
+              <div class="flex items-center justify-between gap-3.5 min-w-0 p-4">
+                <div class="min-w-0">
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-sm text-zinc-100 group-hover:text-white truncate">${escapeHtml(item.title)}</span>
+                    ${badgeHtml}
+                  </div>
+                  ${subtitleText ? `<p class="text-xs ${linkIsLive ? 'text-red-200 font-medium' : 'text-zinc-400'} truncate mt-0.5">${escapeHtml(subtitleText)}</p>` : ''}
+                </div>
+                <div class="flex-shrink-0 ${linkIsLive ? 'text-red-300' : 'text-zinc-500'} group-hover:text-zinc-200 transition duration-200 pl-2">
+                  <i class="fa-solid fa-chevron-right text-xs"></i>
+                </div>
               </div>
+            </div>` : `
+            <div class="flex items-center gap-3.5 min-w-0 pr-2">
+              ${midiaPublica}
               <div class="min-w-0">
                 <div class="flex items-center gap-2">
                   <span class="font-bold text-sm text-zinc-100 group-hover:text-white truncate">${escapeHtml(item.title)}</span>
@@ -778,7 +852,7 @@
             </div>
             <div class="flex-shrink-0 ${linkIsLive ? 'text-red-300' : 'text-zinc-500'} group-hover:text-zinc-200 group-hover:translate-x-0.5 transition duration-200 pl-2">
               <i class="fa-solid fa-chevron-right text-xs"></i>
-            </div>
+            </div>`}
           `;
           pubContainer.appendChild(a);
         }
@@ -788,11 +862,25 @@
           aPrev.href = item.url;
           aPrev.target = "_blank";
           aPrev.className = getEstiloBotaoClasses(item.highlight, linkIsLive, true);
+          const mockTop = temImagem && posicaoImg === 'top';
+          if (mockTop) aPrev.classList.add('flex-col', 'items-stretch', 'justify-start', 'p-0', 'overflow-hidden');
+          aplicarGlowNoElemento(aPrev, item);
           aPrev.innerHTML = `
-            <div class="flex items-center gap-2.5 min-w-0 pr-1">
-              <div class="w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center text-xs ${linkIsLive ? 'bg-red-600 text-white' : (item.highlight ? 'bg-purple-600 text-white' : 'bg-zinc-800 text-purple-400')}">
-                ${renderizarIcone(item.icon)}
+            ${mockTop ? `<div class="flex flex-col gap-0 w-full">
+              ${midiaMock}
+              <div class="flex items-center justify-between gap-2 min-w-0 p-2.5">
+                <div class="min-w-0 truncate">
+                  <div class="flex items-center gap-1.5 truncate">
+                    <span class="font-bold text-xs text-zinc-100 truncate">${escapeHtml(item.title)}</span>
+                    ${badgeHtml}
+                  </div>
+                  ${subtitleText ? `<p class="text-[10px] ${linkIsLive ? 'text-red-200' : 'text-zinc-400'} truncate">${escapeHtml(subtitleText)}</p>` : ''}
+                </div>
+                <div class="flex-shrink-0 text-zinc-500 pl-1"><i class="fa-solid fa-chevron-right text-[10px]"></i></div>
               </div>
+            </div>` : `
+            <div class="flex items-center gap-2.5 min-w-0 pr-1">
+              ${midiaMock}
               <div class="min-w-0 truncate">
                 <div class="flex items-center gap-1.5 truncate">
                   <span class="font-bold text-xs text-zinc-100 truncate">${escapeHtml(item.title)}</span>
@@ -802,7 +890,7 @@
               </div>
             </div>
             <i class="fa-solid fa-chevron-right text-[10px] text-zinc-500"></i>
-          `;
+          `}`;
           prevContainer.appendChild(aPrev);
         }
       });
@@ -914,6 +1002,9 @@
               <button onclick="moverLink(${index}, -1)" ${index === 0 ? 'disabled class="opacity-30 p-1.5 text-zinc-500"' : 'class="p-1.5 text-zinc-400 hover:text-white rounded hover:bg-zinc-800 transition"'}><i class="fa-solid fa-arrow-up text-xs"></i></button>
               <button onclick="moverLink(${index}, 1)" ${index === appConfig.links.length - 1 ? 'disabled class="opacity-30 p-1.5 text-zinc-500"' : 'class="p-1.5 text-zinc-400 hover:text-white rounded hover:bg-zinc-800 transition"'}><i class="fa-solid fa-arrow-down text-xs"></i></button>
               <button onclick="alternarDestaqueLink(${index})" class="px-2 py-1 text-[11px] rounded font-medium ${item.highlight ? 'bg-purple-600 text-white' : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'} transition ml-1"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Glow</button>
+              <label title="Cor personalizada do Glow deste item" class="ml-1 flex items-center gap-1 px-1.5 py-1 rounded ${item.highlight ? 'bg-zinc-800' : 'bg-zinc-800/60 opacity-60'} transition cursor-pointer">
+                <input type="color" value="${escapeHtml(getItemGlowColor(item))}" oninput="atualizarLinkCampo(${index}, 'glowColor', this.value)" class="w-5 h-5 rounded cursor-pointer bg-transparent border-0 p-0">
+              </label>
               <button onclick="excluirLink(${index})" class="p-1.5 text-zinc-500 hover:text-red-400 rounded hover:bg-red-950/30 transition ml-1"><i class="fa-solid fa-trash-can text-xs"></i></button>
             </div>
           </div>
@@ -923,13 +1014,18 @@
             <div><label class="block text-[11px] font-medium text-zinc-400 mb-0.5">Subtítulo (Opcional)</label><input type="text" value="${escapeHtml(item.subtitle || '')}" oninput="atualizarLinkCampo(${index}, 'subtitle', this.value)" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-purple-500"></div>
             <div><label class="block text-[11px] font-medium text-zinc-400 mb-0.5">Badge (Ex: NOVO)</label><input type="text" value="${escapeHtml(item.badge || '')}" oninput="atualizarLinkCampo(${index}, 'badge', this.value)" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-purple-500"></div>
           </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
+            <div class="sm:col-span-3"><label class="block text-[11px] font-medium text-zinc-400 mb-0.5">URL / Caminho da Imagem (opcional)</label><input type="text" value="${escapeHtml(item.imageUrl || '')}" oninput="atualizarLinkCampo(${index}, 'imageUrl', this.value)" placeholder="https://... ou banners/capa.jpg" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-purple-500"></div>
+            <div><label class="block text-[11px] font-medium text-zinc-400 mb-0.5">Posição da Imagem</label><select onchange="atualizarLinkCampo(${index}, 'imagePosition', this.value)" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-purple-500"><option value="left" ${(item.imagePosition || 'left') === 'left' ? 'selected' : ''}>Miniatura à Esquerda</option><option value="top" ${item.imagePosition === 'top' ? 'selected' : ''}>Banner Acima</option></select></div>
+            <div><label class="block text-[11px] font-medium text-zinc-400 mb-0.5">Tamanho da Imagem</label><select onchange="atualizarLinkCampo(${index}, 'imageSize', this.value)" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-purple-500"><option value="sm" ${item.imageSize === 'sm' ? 'selected' : ''}>Pequeno</option><option value="md" ${(!item.imageSize || item.imageSize === 'md') ? 'selected' : ''}>Médio</option><option value="lg" ${item.imageSize === 'lg' ? 'selected' : ''}>Destaque</option><option value="banner" ${item.imageSize === 'banner' ? 'selected' : ''}>Banner Grande</option></select></div>
+          </div>
         `;
         container.appendChild(card);
       });
     }
 
     function adicionarNovoLink() {
-      appConfig.links.push({ id: "link_" + Date.now(), title: "Novo Link Customizado", subtitle: "Breve descrição do destino", url: "https://", icon: "fa-solid fa-link", highlight: false, badge: "", active: true });
+      appConfig.links.push({ id: "link_" + Date.now(), title: "Novo Item Customizado", subtitle: "Breve descrição do destino", url: "https://", icon: "fa-solid fa-link", highlight: false, badge: "", active: true, glowColor: "", imageUrl: "", imagePosition: "left", imageSize: "md" });
       salvarConfiguracao();
       renderizarListaLinksAdmin();
       dispararAtualizacaoGeral();
@@ -981,6 +1077,12 @@
       } catch (e) {
         appConfig = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
       }
+      (appConfig.links || []).forEach(item => {
+        if (!('glowColor' in item)) item.glowColor = "";
+        if (!('imageUrl' in item)) item.imageUrl = "";
+        if (item.imagePosition !== 'top') item.imagePosition = 'left';
+        if (!['sm', 'md', 'lg', 'banner'].includes(item.imageSize)) item.imageSize = 'md';
+      });
     }
 
     function salvarConfiguracao() {
@@ -1221,22 +1323,52 @@
       (cfg.links || []).filter(l => l.active).forEach(l => {
         const isTwitch = (l.url && l.url.toLowerCase().includes('twitch.tv/')) || (l.icon && l.icon.includes('twitch'));
         const isHl = l.highlight;
+        const glowCor = (l.glowColor && l.glowColor.trim()) || cfg.primaryColor || '#9146FF';
+        const glowRgb = hexToRgbTriplet(glowCor);
         const bg = isHl ? 'rgba(88, 28, 135, 0.35)' : '#18181b';
-        const border = isHl ? cfg.primaryColor : '#27272a';
-        const shadow = isHl ? `0 0 20px rgba(145, 70, 255, 0.4)` : 'none';
+        const border = isHl ? glowCor : '#27272a';
+        const shadow = isHl ? `0 0 20px rgba(${glowRgb}, 0.4)` : 'none';
+        const glowVar = isHl ? `--glow-rgb: ${glowRgb}; ` : '';
+
+        const temImg = !!(l.imageUrl && l.imageUrl.trim());
+        const posImg = l.imagePosition === 'top' ? 'top' : 'left';
+        const sz = getItemImageSize(l);
+        let midiaHtml;
+        if (temImg && posImg === 'top') {
+          midiaHtml = `<img src="${escapeHtml(l.imageUrl)}" alt="" loading="lazy" onerror="this.style.display='none'" style="width: 100%; height: 150px; object-fit: cover; display: block;">`;
+        } else if (temImg && posImg === 'left') {
+          midiaHtml = `<img src="${escapeHtml(l.imageUrl)}" alt="" loading="lazy" onerror="this.style.display='none'" style="width: ${sz.imgW}px; height: ${sz.imgH}px; border-radius: ${sz.imgR}px; object-fit: cover; flex-shrink: 0;">`;
+        } else {
+          midiaHtml = `<div id="${isTwitch ? 'twitchIconBox' : ''}" style="width: 40px; height: 40px; border-radius: 12px; background: ${isHl ? glowCor : '#27272a'}; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">${renderizarIcone(l.icon)}</div>`;
+        }
+
+        const conteudo = temImg && posImg === 'top'
+          ? `<div style="display: flex; flex-direction: column; width: 100%;">
+              ${midiaHtml}
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; min-width: 0;">
+                <div style="min-width: 0; text-align: left;">
+                  <div style="font-weight: 700; font-size: 14px; color: #fff;">${escapeHtml(l.title)} <span id="${isTwitch ? 'twitchBadgeTag' : ''}">${l.badge ? `<span style="font-size: 10px; font-weight: 800; background: ${glowCor}; color: #fff; padding: 2px 6px; border-radius: 4px; margin-left: 6px;">${escapeHtml(l.badge)}</span>` : ''}</span></div>
+                  <div id="${isTwitch ? 'twitchSubText' : ''}" style="font-size: 12px; color: #a1a1aa; margin-top: 2px;">${escapeHtml(l.subtitle || '')}</div>
+                </div>
+                <div style="color: #71717a; font-size: 12px; padding-left: 8px; flex-shrink: 0;"><i class="fa-solid fa-chevron-right"></i></div>
+              </div>
+            </div>`
+          : `<div style="display: flex; align-items: center; gap: 14px; min-width: 0;">
+              ${midiaHtml}
+              <div style="min-width: 0; text-align: left;">
+                <div style="font-weight: 700; font-size: 14px; color: #fff;">${escapeHtml(l.title)} <span id="${isTwitch ? 'twitchBadgeTag' : ''}">${l.badge ? `<span style="font-size: 10px; font-weight: 800; background: ${glowCor}; color: #fff; padding: 2px 6px; border-radius: 4px; margin-left: 6px;">${escapeHtml(l.badge)}</span>` : ''}</span></div>
+                <div id="${isTwitch ? 'twitchSubText' : ''}" style="font-size: 12px; color: #a1a1aa; margin-top: 2px;">${escapeHtml(l.subtitle || '')}</div>
+              </div>
+            </div>
+            <div style="color: #71717a; font-size: 12px; padding-left: 8px; flex-shrink: 0;"><i class="fa-solid fa-chevron-right"></i></div>`;
+
+        const cardFlex = (temImg && posImg === 'top')
+          ? 'flex-direction: column; align-items: stretch; padding: 0; overflow: hidden;'
+          : '';
 
         linksHtml += `
-      <a id="${isTwitch ? 'twitchMainBtn' : ''}" href="${l.url}" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: ${bg}; border: 1px solid ${border}; border-radius: 16px; text-decoration: none; box-shadow: ${shadow}; transition: transform 0.2s, border-color 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
-        <div style="display: flex; align-items: center; gap: 14px; min-width: 0;">
-          <div id="${isTwitch ? 'twitchIconBox' : ''}" style="width: 40px; height: 40px; border-radius: 12px; background: ${isHl ? cfg.primaryColor : '#27272a'}; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">
-            ${renderizarIcone(l.icon)}
-          </div>
-          <div style="min-width: 0; text-align: left;">
-            <div style="font-weight: 700; font-size: 14px; color: #fff;">${escapeHtml(l.title)} <span id="${isTwitch ? 'twitchBadgeTag' : ''}">${l.badge ? `<span style="font-size: 10px; font-weight: 800; background: ${cfg.primaryColor}; color: #fff; padding: 2px 6px; border-radius: 4px; margin-left: 6px;">${escapeHtml(l.badge)}</span>` : ''}</span></div>
-            <div id="${isTwitch ? 'twitchSubText' : ''}" style="font-size: 12px; color: #a1a1aa; margin-top: 2px;">${escapeHtml(l.subtitle || '')}</div>
-          </div>
-        </div>
-        <div style="color: #71717a; font-size: 12px; padding-left: 8px;"><i class="fa-solid fa-chevron-right"></i></div>
+      <a id="${isTwitch ? 'twitchMainBtn' : ''}" href="${l.url}" target="_blank" rel="noopener noreferrer" class="${isHl ? 'glow-item' : ''}" style="${glowVar}display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: ${bg}; border: 1px solid ${border}; border-radius: 16px; text-decoration: none; box-shadow: ${shadow}; transition: transform 0.2s, border-color 0.2s; ${cardFlex}" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ${conteudo}
       </a>`;
       });
 
@@ -1256,6 +1388,11 @@
     .avatar { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 3px solid ${cfg.primaryColor}; box-shadow: 0 0 25px rgba(145, 70, 255, 0.4); margin-bottom: 16px; }
     @keyframes liveGlow { 0%, 100% { box-shadow: 0 0 16px rgba(239, 68, 68, 0.6); } 50% { box-shadow: 0 0 30px rgba(239, 68, 68, 0.95); } }
     .live-pulse { animation: liveGlow 2s infinite ease-in-out; }
+    @keyframes itemGlow {
+      0%, 100% { box-shadow: 0 0 15px rgba(var(--glow-rgb, 145, 70, 255), 0.4), inset 0 0 10px rgba(var(--glow-rgb, 145, 70, 255), 0.2); }
+      50% { box-shadow: 0 0 28px rgba(var(--glow-rgb, 145, 70, 255), 0.8), inset 0 0 15px rgba(var(--glow-rgb, 145, 70, 255), 0.4); }
+    }
+    .glow-item { animation: itemGlow 2.5s infinite ease-in-out; }
   </style>
 </head>
 <body>
