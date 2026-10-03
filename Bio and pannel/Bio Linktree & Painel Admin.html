@@ -63,6 +63,34 @@
       overflow: hidden;
     }
 
+    /* Camada de fundo animada: acima do fundo do container, abaixo do conteúdo. */
+    [data-bg-layer] { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+    [data-bg-layer]:empty { display: none; }
+    #publicPageCanvas > *:not([data-bg-layer]),
+    #phoneShell > *:not([data-bg-layer]) { position: relative; z-index: 1; }
+    .bg-anim-layers { position: absolute; inset: 0; }
+    .bg-anim-blob {
+      position: absolute;
+      filter: blur(80px);
+      mix-blend-mode: screen;
+      opacity: 0.75;
+      will-change: transform, border-radius;
+    }
+    .bg-anim-blob.organico { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+    @keyframes deformar {
+      0%   { transform: translate(0, 0) scale(1); }
+      50%  { transform: translate(6%, -8%) scale(1.15); }
+      100% { transform: translate(-7%, 6%) scale(0.95); }
+    }
+    @keyframes flutuar {
+      0%   { transform: translate(0, 0) scale(1); }
+      50%  { transform: translate(8%, 6%) scale(1.2); }
+      100% { transform: translate(-6%, -5%) scale(0.9); }
+    }
+    .bg-anim-flutua { animation: flutuar 18s ease-in-out infinite alternate; }
+    .bg-anim-flutua:nth-child(2n) { animation-duration: 22s; animation-direction: alternate-reverse; }
+    .bg-anim-flutua:nth-child(3n) { animation-duration: 26s; }
+
     .phone-dynamic-island {
       position: absolute;
       top: 8px;
@@ -154,7 +182,8 @@
     
     <!-- 1. PÁGINA PÚBLICA -->
     <section id="sectionPreview" class="w-full flex flex-col items-center justify-center transition-all duration-300">
-      <div id="publicPageCanvas" class="w-full max-w-[580px] min-h-[820px] rounded-3xl p-6 sm:p-8 flex flex-col items-center relative transition-all duration-300 border border-zinc-800/60 shadow-2xl shadow-black/80 my-2">
+      <div id="publicPageCanvas" class="w-full max-w-[580px] min-h-[820px] rounded-3xl p-6 sm:p-8 flex flex-col items-center relative transition-all duration-300 border border-zinc-800/60 shadow-2xl shadow-black/80 my-2 overflow-hidden">
+        <div data-bg-layer class="empty:hidden"></div>
         
         <div id="pubLiveBadgeWrap" class="mb-4 hidden">
           <a id="pubLiveBadgeLink" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full text-xs font-bold bg-red-950/80 border border-red-500/50 text-red-200 shadow-lg shadow-red-900/30 hover:bg-red-900/80 transition transform hover:scale-105">
@@ -212,6 +241,7 @@
 
             <!-- Moldura do Smartphone -->
             <div id="phoneShell" class="phone-simulator-shell">
+              <div data-bg-layer class="empty:hidden"></div>
               <div class="phone-dynamic-island"></div>
               
               <div class="phone-status-bar">
@@ -400,18 +430,34 @@
               <div>
                 <label class="block text-xs font-medium text-zinc-400 mb-1">Tipo de Fundo</label>
                 <select id="cfgBgType" onchange="dispararAtualizacaoGeral()" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500">
-                  <option value="solid">Sólido</option>
-                  <option value="gradient-linear">Gradiente Linear</option>
-                  <option value="gradient-radial">Gradiente Radial</option>
-                  <option value="grid">Grade Gamer</option>
-                  <option value="dots">Pontilhado Tech</option>
-                  <option value="stripes">Linhas Diagonais</option>
-                  <optgroup label="— Abstratos / Modernos —">
-                    <option value="aurora">Aurora Mesh (Gradiente Fluido)</option>
+                  <optgroup label="Básicos">
+                    <option value="solid">Sólido</option>
+                    <option value="gradient-linear">Gradiente Linear</option>
+                    <option value="gradient-radial">Gradiente Radial</option>
+                  </optgroup>
+                  <optgroup label="Geométricos &amp; Linhas">
+                    <option value="grid">Grade Gamer</option>
+                    <option value="dots">Pontilhado Tech</option>
+                    <option value="stripes">Linhas Diagonais</option>
+                    <option value="polygons">Polígonos Abstratos</option>
+                    <option value="stripes-psychedelic">Listras Psicodélicas</option>
+                    <option value="fibers">Fibras Orgânicas</option>
+                    <option value="hexagons">Malha Hexagonal</option>
+                    <option value="isometric">Grade Isométrica</option>
+                  </optgroup>
+                  <optgroup label="Névoas &amp; Atmosferas">
+                    <option value="aurora">Aurora Mesh</option>
+                    <option value="dark-velvet">Dark Velvet</option>
+                    <option value="lava-lamp">Lava Lamp</option>
+                    <option value="topography">Topografia Fluida</option>
+                    <option value="neon-smoke">Névoa de Néon</option>
+                    <option value="water-ripple">Ondas Concêntricas (Water Ripple)</option>
                     <option value="waves">Ondas Fluidas (Waves)</option>
-                    <option value="hexagons">Malha Hexagonal (Tech)</option>
-                    <option value="isometric">Grade Isométrica (Triângulos)</option>
-                    <option value="concentric">Anéis Concêntricos (Abstrato)</option>
+                    <option value="concentric">Anéis Concêntricos</option>
+                  </optgroup>
+                  <optgroup label="Orgânicos &amp; Animados">
+                    <option value="aurora-animated">Aurora Boreal Animada</option>
+                    <option value="fluid-blob">Fluid Blob</option>
                   </optgroup>
                 </select>
               </div>
@@ -434,6 +480,10 @@
               <div id="wrapCfgBgPatternOpacity" class="transition-opacity">
                 <label class="block text-xs font-medium text-zinc-400 mb-1">Opacidade do Padrão <span id="cfgBgPatternOpacityVal" class="font-mono text-zinc-500">0.18</span></label>
                 <input type="range" id="cfgBgPatternOpacity" min="0.05" max="0.4" step="0.01" value="0.18" oninput="dispararAtualizacaoGeral()" class="w-full accent-purple-500 disabled:opacity-40 disabled:cursor-not-allowed">
+              </div>
+              <div id="wrapCfgBgPatternScale" class="transition-opacity">
+                <label class="block text-xs font-medium text-zinc-400 mb-1">Escala do Padrão <span id="cfgBgPatternScaleVal" class="font-mono text-zinc-500">1.0×</span></label>
+                <input type="range" id="cfgBgPatternScale" min="0.5" max="3" step="0.1" value="1" oninput="dispararAtualizacaoGeral()" class="w-full accent-purple-500 disabled:opacity-40 disabled:cursor-not-allowed">
               </div>
             </div>
           </div>
@@ -559,6 +609,7 @@
       bgColor2: "#1a1030",
       bgAngle: "135deg",
       bgPatternOpacity: 0.18,
+      bgPatternScale: 1,
       buttonRadius: "rounded-2xl",
       buttonStyle: "glass",
       socials: [
@@ -633,8 +684,9 @@
       // bgType -> quais controles fazem sentido. 'aurora' e 'isometric' usam cor2+primaryColor;
       // 'concentric' e 'waves' também reposicionam com bgAngle; a opacidade controla o traço.
       const usaSegundaCor = tipo !== 'solid';
-      const usaAngulo = tipo.startsWith('gradient') || ['stripes', 'aurora', 'isometric', 'concentric'].includes(tipo);
-      const usaOpacidade = ['grid', 'dots', 'stripes', 'aurora', 'waves', 'hexagons', 'isometric', 'concentric'].includes(tipo);
+      const usaAngulo = tipo.startsWith('gradient') || ['stripes', 'stripes-psychedelic', 'aurora', 'aurora-animated', 'isometric', 'concentric'].includes(tipo);
+      const usaOpacidade = BG_TYPES_ESCALAVEIS.includes(tipo) || ['aurora', 'aurora-animated', 'dark-velvet', 'lava-lamp', 'topography', 'neon-smoke'].includes(tipo);
+      const usaEscala = BG_TYPES_ESCALAVEIS.includes(tipo);
 
       const c2 = g('cfgBgColor2');
       if (c2) c2.disabled = !usaSegundaCor;
@@ -650,6 +702,11 @@
       if (op) op.disabled = !usaOpacidade;
       const wo = g('wrapCfgBgPatternOpacity');
       if (wo) wo.classList.toggle('opacity-40', !usaOpacidade);
+
+      const esc = g('cfgBgPatternScale');
+      if (esc) esc.disabled = !usaEscala;
+      const wes = g('wrapCfgBgPatternScale');
+      if (wes) wes.classList.toggle('opacity-40', !usaEscala);
     }
 
     function dispararAtualizacaoGeral() {
@@ -682,6 +739,10 @@
         appConfig.bgPatternOpacity = Math.min(0.4, Math.max(0.05, op));
         if (g('cfgBgPatternOpacityVal')) g('cfgBgPatternOpacityVal').innerText = appConfig.bgPatternOpacity.toFixed(2);
       }
+      if (g('cfgBgPatternScale')) {
+        appConfig.bgPatternScale = sanearEscala(g('cfgBgPatternScale').value);
+        if (g('cfgBgPatternScaleVal')) g('cfgBgPatternScaleVal').innerText = appConfig.bgPatternScale.toFixed(1) + '×';
+      }
       atualizarEstadoControlesFundo();
       if (g('cfgButtonRadius')) appConfig.buttonRadius = g('cfgButtonRadius').value;
       if (g('cfgButtonStyle')) appConfig.buttonStyle = g('cfgButtonStyle').value;
@@ -696,6 +757,10 @@
       const estiloFundo = gerarEstiloFundo(appConfig);
       if (g('publicPageCanvas')) Object.assign(g('publicPageCanvas').style, estiloFundo);
       if (g('phoneShell')) Object.assign(g('phoneShell').style, estiloFundo);
+
+      // Camada animada: precisa ir para as duas superfícies em paralelo com o estilo.
+      const camadaFundo = renderizarCamadaDecorativaFundo(appConfig);
+      document.querySelectorAll('[data-bg-layer]').forEach(el => { el.innerHTML = camadaFundo; });
 
       if (g('pubDisplayName')) g('pubDisplayName').innerText = appConfig.displayName || "";
       if (g('prevDisplayName')) g('prevDisplayName').innerText = appConfig.displayName || "";
@@ -785,8 +850,29 @@
       return `${parseInt(h.slice(0, 2), 16)}, ${parseInt(h.slice(2, 4), 16)}, ${parseInt(h.slice(4, 6), 16)}`;
     }
 
-    const BG_TYPES = ['solid', 'gradient-linear', 'gradient-radial', 'grid', 'dots', 'stripes', 'aurora', 'waves', 'hexagons', 'isometric', 'concentric'];
+    // bgType lineares continuam usando bgAngle; os demais apenas realçam a tinta.
+    const BG_TYPES = [
+      'solid', 'gradient-linear', 'gradient-radial',
+      'grid', 'dots', 'stripes', 'polygons', 'stripes-psychedelic', 'fibers', 'hexagons', 'isometric',
+      'aurora', 'waves', 'concentric', 'dark-velvet', 'lava-lamp', 'topography', 'neon-smoke', 'water-ripple',
+      'aurora-animated', 'fluid-blob'
+    ];
     const BG_ANGLES = ['135deg', '90deg', '180deg', 'circle'];
+
+    // Tipos desenhados por elementos DOM animados (não por background-image).
+    const BG_TYPES_ANIMADOS = ['aurora-animated', 'fluid-blob'];
+
+    // Tipos cujo motivo se repete: o slider de escala controla o background-size.
+    const BG_TYPES_ESCALAVEIS = ['grid', 'dots', 'stripes', 'polygons', 'stripes-psychedelic', 'fibers', 'hexagons', 'isometric', 'waves', 'concentric', 'water-ripple'];
+
+    const BG_SCALE_MIN = 0.5;
+    const BG_SCALE_MAX = 3;
+
+    function sanearEscala(v) {
+      const n = parseFloat(v);
+      if (!Number.isFinite(n)) return 1;
+      return Math.min(BG_SCALE_MAX, Math.max(BG_SCALE_MIN, n));
+    }
 
     // Normaliza para #rrggbb: as cores são interpoladas tanto em CSS quanto dentro de
     // Data-URI SVG, então precisam ser validadas antes de chegar lá.
@@ -820,13 +906,18 @@
       const tinta2 = `rgba(${hexToRgbTriplet(cor2)}, ${Math.min(0.9, op * 1.6)})`;
       const dir = angulo === '90deg' ? '90deg' : (angulo === '180deg' ? '180deg' : '135deg');
 
-      const est = (backgroundImage, backgroundSize, backgroundRepeat) => ({
+      // Escala do motivo: multiplica todos os tamanhos fixos para que o usuário
+      // controle a densidade do padrão sem reescrever cada caso.
+      const escala = sanearEscala(c.bgPatternScale);
+      const u = (px) => Math.round(px * escala * 100) / 100;
+
+      const est = (backgroundImage, backgroundSize, backgroundRepeat, extra) => Object.assign({
         background: base,
         backgroundImage,
         backgroundSize: backgroundSize || 'auto',
         backgroundRepeat: backgroundRepeat || 'no-repeat',
         backgroundAttachment: 'scroll'
-      });
+      }, extra || {});
 
       if (tipo === 'solid') return { background: base, backgroundImage: 'none', backgroundSize: 'auto', backgroundRepeat: 'repeat', backgroundAttachment: 'scroll' };
 
@@ -840,11 +931,11 @@
       }
 
       if (tipo === 'grid') {
-        return est(`linear-gradient(${tinta} 1px, transparent 1px), linear-gradient(90deg, ${tinta} 1px, transparent 1px)`, '44px 44px', 'repeat');
+        return est(`linear-gradient(${tinta} 1px, transparent 1px), linear-gradient(90deg, ${tinta} 1px, transparent 1px)`, `${u(44)}px ${u(44)}px`, 'repeat');
       }
 
       if (tipo === 'dots') {
-        return est(`radial-gradient(${tinta} 1.5px, transparent 1.5px)`, '22px 22px', 'repeat');
+        return est(`radial-gradient(${tinta} 1.5px, transparent 1.5px)`, `${u(22)}px ${u(22)}px`, 'repeat');
       }
 
       if (tipo === 'stripes') {
@@ -853,7 +944,7 @@
 
       // Aurora: mesh gradient com focos assimétricos sobrepostos, cada um com dispersão
       // larga para dissolver a borda do gradiente. bgAngle reposiciona o foco principal.
-      if (tipo === 'aurora') {
+      if (tipo === 'aurora' || tipo === 'aurora-animated') {
         const focos = {
           '135deg': ['18% 12%', '82% 88%', '52% 45%'],
           '90deg': ['50% 8%', '20% 92%', '78% 50%'],
@@ -873,13 +964,13 @@
         const onda = (y, amp, larg) => `<path d="M0 ${y} Q${larg / 4} ${y - amp} ${larg / 2} ${y} T${larg} ${y} T${larg * 1.5} ${y} T${larg * 2} ${y}" fill="none" stroke="${cor2}" stroke-opacity="${op}" stroke-width="2" stroke-linecap="round"/>`;
         const onda2 = (y, amp, larg) => `<path d="M0 ${y} Q${larg / 4} ${y + amp} ${larg / 2} ${y} T${larg} ${y} T${larg * 1.5} ${y} T${larg * 2} ${y}" fill="none" stroke="${primaria}" stroke-opacity="${Math.min(0.9, op * 1.5)}" stroke-width="1.5" stroke-linecap="round"/>`;
         const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="240" height="80" viewBox="0 0 240 80"><path d="M0 40 Q60 40 120 40 T240 40 V80 H0 Z" fill="${cor2}" fill-opacity="${op * 0.35}"/>${onda(40, 22, 120)}${onda2(26, 16, 120)}</svg>`;
-        return est(svgParaDataUri(svg), '240px 80px', 'repeat');
+        return est(svgParaDataUri(svg), `${u(240)}px ${u(80)}px`, 'repeat');
       }
 
       // Hexagons: ladrilho clássico de favo de mel, traço controlado pela opacidade.
       if (tipo === 'hexagons') {
         const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="56" height="100" viewBox="0 0 56 100"><path d="M28 66 L0 50 L0 16 L28 0 L56 16 L56 50 L28 66 Z M28 0 L0 16 M28 0 L56 16" fill="none" stroke="${cor2}" stroke-opacity="${op}" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
-        return est(svgParaDataUri(svg), '56px 100px', 'repeat');
+        return est(svgParaDataUri(svg), `${u(56)}px ${u(100)}px`, 'repeat');
       }
 
       // Isometric: triângulos em xadrez via dois gradientes a 60°/-60° que se cruzam.
@@ -887,11 +978,138 @@
         return est(`repeating-linear-gradient(${dir === '90deg' ? '60deg' : dir}, ${tinta} 0 1.5px, transparent 1.5px 22px), repeating-linear-gradient(${dir === '90deg' ? '-60deg' : dir === '180deg' ? '120deg' : '60deg'}, ${tinta2} 0 1.5px, transparent 1.5px 22px)`, 'auto', 'repeat');
       }
 
+      // Polygons: dois traços diagonais cruzados a 45°/-45° formando losangos.
+      if (tipo === 'polygons') {
+        return est(
+          `repeating-linear-gradient(45deg, ${tinta} 0 1.5px, transparent 1.5px ${u(30)}px), repeating-linear-gradient(-45deg, ${tinta2} 0 1.5px, transparent 1.5px ${u(30)}px)`,
+          `${u(60)}px ${u(60)}px`, 'repeat'
+        );
+      }
+
+      // Stripes Psicodélicas: faixas largas alternando as duas cores com leve offset.
+      if (tipo === 'stripes-psychedelic') {
+        return est(
+          `repeating-linear-gradient(${dir === '90deg' ? '135deg' : dir}, ${tinta} 0 ${u(18)}px, transparent ${u(18)}px ${u(36)}px, ${tinta2} ${u(36)}px ${u(54)}px, transparent ${u(54)}px ${u(72)}px)`,
+          'auto', 'repeat'
+        );
+      }
+
+      // Water Ripple: anéis concêntricos empilhados que se repetem em ladrilho.
+      if (tipo === 'water-ripple') {
+        return est(
+          `radial-gradient(circle, transparent 0 30%, ${tinta} 30% 32%, transparent 32% 46%, ${tinta2} 46% 48%, transparent 48% 62%)`,
+          `${u(180)}px ${u(180)}px`, 'repeat'
+        );
+      }
+
+      // Fibers: raios finos concêntricos cruzados por traços longitudinais.
+      if (tipo === 'fibers') {
+        return est(
+          `repeating-radial-gradient(circle at 50% 50%, ${tinta} 0 1px, transparent 1px 14px), repeating-linear-gradient(90deg, ${tinta2} 0 1px, transparent 1px 26px)`,
+          `${u(120)}px ${u(120)}px`, 'repeat'
+        );
+      }
+
+      // Dark Velvet: três campos de luz sobrepostos, denso no centro e suave nas bordas.
+      if (tipo === 'dark-velvet') {
+        return est([
+          `radial-gradient(70% 60% at 20% 30%, ${tinta2}, transparent 72%)`,
+          `radial-gradient(65% 55% at 80% 70%, ${tintaPrimaria}, transparent 74%)`,
+          `radial-gradient(90% 80% at 50% 50%, ${tinta}, transparent 80%)`
+        ].join(', '));
+      }
+
+      // Lava Lamp: focos neon que se somam em vez de se sobrepor opacos.
+      if (tipo === 'lava-lamp') {
+        return est([
+          `radial-gradient(45% 40% at 22% 28%, ${tintaPrimaria}, transparent 70%)`,
+          `radial-gradient(50% 45% at 78% 65%, ${tinta2}, transparent 72%)`,
+          `radial-gradient(38% 35% at 55% 45%, ${tintaPrimaria}, transparent 68%)`
+        ].join(', '), 'auto', 'no-repeat', { backgroundBlendMode: 'screen' });
+      }
+
+      // Topography: dois relevos suaves em pontas opostas.
+      if (tipo === 'topography') {
+        return est([
+          `radial-gradient(60% 60% at 12% 18%, ${tintaPrimaria}, transparent 76%)`,
+          `radial-gradient(60% 60% at 88% 82%, ${tinta2}, transparent 76%)`
+        ].join(', '));
+      }
+
+      // Neon Smoke: brilhos discretos de primaria/cor2 sobre base escura.
+      if (tipo === 'neon-smoke') {
+        return est([
+          `radial-gradient(55% 50% at 30% 35%, ${tintaPrimaria}, transparent 78%)`,
+          `radial-gradient(50% 45% at 70% 60%, ${tinta2}, transparent 80%)`,
+          `radial-gradient(45% 40% at 50% 90%, ${tinta}, transparent 82%)`
+        ].join(', '), 'auto', 'no-repeat', { backgroundBlendMode: 'screen' });
+      }
+
+      // Fluid Blob: a cor base fica lisa; a forma animada vive na camada decorativa.
+      if (tipo === 'fluid-blob') {
+        return { background: base, backgroundImage: 'none', backgroundSize: 'auto', backgroundRepeat: 'no-repeat', backgroundAttachment: 'scroll' };
+      }
+
       // Concentric: anéis + arcos tracejados a partir do topo/centro.
       const cx = angulo === '90deg' ? '100' : (angulo === '180deg' ? '0' : '100');
       const cy = angulo === '90deg' ? '0' : '100';
       const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><g fill="none" stroke="${cor2}" stroke-opacity="${op}" stroke-width="1.5"><circle cx="${cx}" cy="${cy}" r="25"/><circle cx="${cx}" cy="${cy}" r="50"/><circle cx="${cx}" cy="${cy}" r="75"/><circle cx="${cx}" cy="${cy}" r="100"/><circle cx="${cx}" cy="${cy}" r="125"/><circle cx="${cx}" cy="${cy}" r="150"/></g><g fill="none" stroke="${primaria}" stroke-opacity="${Math.min(0.9, op * 1.8)}" stroke-width="2" stroke-linecap="round" stroke-dasharray="40 120"><path d="M${cx} ${cy} m -170 0 a 170 170 0 0 1 340 0"/><path d="M${cx} ${cy} m -120 0 a 120 120 0 0 1 240 0"/></g></svg>`;
-      return est(svgParaDataUri(svg), '200px 200px', 'repeat');
+      return est(svgParaDataUri(svg), `${u(200)}px ${u(200)}px`, 'repeat');
+    }
+
+    // Camada de elementos animados para os bgTypes que CSS puro não resolve.
+    // Fica acima do fundo do container (z-0) e abaixo do conteúdo. O CSS do preview
+    // está no <style> do painel; esta cópia é injetada no index.html exportado.
+    const CSS_ANIMACAO_FUNDO = `
+    @keyframes deformar {
+      0%   { transform: translate(0, 0) scale(1); }
+      50%  { transform: translate(6%, -8%) scale(1.15); }
+      100% { transform: translate(-7%, 6%) scale(0.95); }
+    }
+    .bg-anim-layers { position: absolute; inset: 0; }
+    .bg-anim-blob {
+      position: absolute; filter: blur(80px); mix-blend-mode: screen;
+      opacity: 0.75; will-change: transform, border-radius;
+    }
+    .bg-anim-blob.organico { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+    @keyframes flutuar {
+      0%   { transform: translate(0, 0) scale(1); }
+      50%  { transform: translate(8%, 6%) scale(1.2); }
+      100% { transform: translate(-6%, -5%) scale(0.9); }
+    }
+    .bg-anim-flutua { animation: flutuar 18s ease-in-out infinite alternate; }
+    .bg-anim-flutua:nth-child(2n) { animation-duration: 22s; animation-direction: alternate-reverse; }
+    .bg-anim-flutua:nth-child(3n) { animation-duration: 26s; }`;
+
+    function renderizarCamadaDecorativaFundo(cfg) {
+      const c = cfg || {};
+      const tipo = BG_TYPES.includes(c.bgType) ? c.bgType : 'solid';
+      if (!BG_TYPES_ANIMADOS.includes(tipo)) return '';
+      const cor2 = sanearHexCor(c.bgColor2, DEFAULT_CONFIG.bgColor2);
+      const primaria = sanearHexCor(c.primaryColor, DEFAULT_CONFIG.primaryColor);
+      const op = Math.min(0.4, Math.max(0.05, parseFloat(c.bgPatternOpacity) || DEFAULT_CONFIG.bgPatternOpacity));
+
+      // Tamanho relativo ao container para o mesmo visual nas 3 superfícies.
+      const mancha = (top, left, tam, cor, organica) =>
+        `<div class="bg-anim-blob bg-anim-flutua${organica ? ' organico' : ''}" style="top:${top}%; left:${left}%; width:${tam}%; aspect-ratio:1; background: radial-gradient(circle, ${cor}, transparent 70%); opacity:${(0.6 * (op / DEFAULT_CONFIG.bgPatternOpacity)).toFixed(2)};"></div>`;
+
+      if (tipo === 'aurora-animated') {
+        return `<div class="bg-anim-layers" aria-hidden="true">` +
+          mancha(-10, 5, 70, primaria) +
+          mancha(40, 55, 60, cor2) +
+          mancha(-20, 60, 65, cor2) +
+          mancha(55, -10, 55, primaria) +
+          `</div>`;
+      }
+
+      // Fluid Blob: formas com border-radius assimétrico, ancoradas nas bordas.
+      const blob = (top, left, tam, de, para) =>
+        `<div class="bg-anim-blob bg-anim-flutua organico" style="top:${top}%; left:${left}%; width:${tam}%; aspect-ratio:1; background: linear-gradient(135deg, ${de}, ${para}); opacity:${(0.55 * (op / DEFAULT_CONFIG.bgPatternOpacity)).toFixed(2)};"></div>`;
+      return `<div class="bg-anim-layers" aria-hidden="true">` +
+        blob(-15, -10, 65, primaria, cor2) +
+        blob(45, 30, 80, cor2, primaria) +
+        blob(-25, 55, 55, primaria, cor2) +
+        `</div>`;
     }
 
     // Converte as chaves camelCase do estilo gerado em propriedades CSS válidas (kebab-case).
@@ -1153,6 +1371,8 @@
       if (document.getElementById('cfgBgColor2Hex')) document.getElementById('cfgBgColor2Hex').innerText = appConfig.bgColor2 || "#1a1030";
       s('cfgBgAngle', appConfig.bgAngle || "135deg");
       s('cfgBgPatternOpacity', appConfig.bgPatternOpacity != null ? appConfig.bgPatternOpacity : 0.18);
+      s('cfgBgPatternScale', sanearEscala(appConfig.bgPatternScale));
+      if (g('cfgBgPatternScaleVal')) g('cfgBgPatternScaleVal').innerText = sanearEscala(appConfig.bgPatternScale).toFixed(1) + '×';
       if (document.getElementById('cfgBgPatternOpacityVal')) document.getElementById('cfgBgPatternOpacityVal').innerText = Number(appConfig.bgPatternOpacity != null ? appConfig.bgPatternOpacity : 0.18).toFixed(2);
       atualizarEstadoControlesFundo();
       s('cfgButtonRadius', appConfig.buttonRadius || "rounded-2xl");
@@ -1323,6 +1543,7 @@
       let op = parseFloat(c.bgPatternOpacity);
       if (!Number.isFinite(op)) op = DEFAULT_CONFIG.bgPatternOpacity;
       c.bgPatternOpacity = Math.min(0.4, Math.max(0.05, op));
+      c.bgPatternScale = sanearEscala(c.bgPatternScale);
 
       (c.links || []).forEach(item => {
         if (!('glowColor' in item)) item.glowColor = "";
@@ -1573,6 +1794,9 @@
     function gerarCodigoHTMLPronto() {
       const cfg = appConfig;
       const channel = (cfg.twitchUsername || 'omarotto').trim().toLowerCase();
+      const bgAnimado = BG_TYPES_ANIMADOS.includes(BG_TYPES.includes(cfg.bgType) ? cfg.bgType : 'solid');
+      const camadaFundo = bgAnimado ? renderizarCamadaDecorativaFundo(cfg) : '';
+      const cssAnimacaoFundo = bgAnimado ? CSS_ANIMACAO_FUNDO : '';
 
       let socialsHtml = '';
       (cfg.socials || []).filter(s => s.active && s.url).forEach(s => {
@@ -1658,9 +1882,14 @@
       50% { box-shadow: 0 0 28px rgba(var(--glow-rgb, 145, 70, 255), 0.8), inset 0 0 15px rgba(var(--glow-rgb, 145, 70, 255), 0.4); }
     }
     .glow-item { animation: itemGlow 2.5s infinite ease-in-out; }
+    body { position: relative; }
+    .card { position: relative; z-index: 1; }
+    [data-bg-layer] { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+    [data-bg-layer]:empty { display: none; }${cssAnimacaoFundo}
   </style>
 </head>
 <body>
+  ${camadaFundo}
   <main class="card">
     <div id="liveBadgeWrap" style="margin-bottom: 16px; display: none;">
       <a href="https://twitch.tv/${channel}" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; border-radius: 9999px; font-size: 12px; font-weight: 800; background: rgba(127, 29, 29, 0.85); border: 1px solid rgba(239, 68, 68, 0.6); color: #fecaca; text-decoration: none; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);" class="live-pulse">
