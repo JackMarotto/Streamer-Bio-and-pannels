@@ -68,7 +68,7 @@
     [data-bg-layer]:empty { display: none; }
     #publicPageCanvas > *:not([data-bg-layer]),
     #phoneShell > *:not([data-bg-layer]) { position: relative; z-index: 1; }
-    .bg-anim-layers { position: absolute; inset: 0; }
+    .bg-anim-layers { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
     .bg-anim-blob {
       position: absolute;
       filter: blur(80px);
@@ -87,9 +87,9 @@
       50%  { transform: translate(8%, 6%) scale(1.2); }
       100% { transform: translate(-6%, -5%) scale(0.9); }
     }
-    .bg-anim-flutua { animation: flutuar 18s ease-in-out infinite alternate; }
-    .bg-anim-flutua:nth-child(2n) { animation-duration: 22s; animation-direction: alternate-reverse; }
-    .bg-anim-flutua:nth-child(3n) { animation-duration: 26s; }
+    .bg-anim-flutua { animation: flutuar calc(18s / var(--bg-speed, 1)) ease-in-out infinite alternate; }
+    .bg-anim-flutua:nth-child(2n) { animation-duration: calc(22s / var(--bg-speed, 1)); animation-direction: alternate-reverse; }
+    .bg-anim-flutua:nth-child(3n) { animation-duration: calc(26s / var(--bg-speed, 1)); }
 
     .phone-dynamic-island {
       position: absolute;
@@ -373,7 +373,20 @@
                     <input type="file" id="cfgAvatarFile" accept="image/*" class="hidden" onchange="tratarUploadAvatar(event)">
                   </label>
                 </div>
-                <span class="text-[10px] text-zinc-500 block mt-1">Exemplo: <code>Bio and pannel/Fotos/foto-5.png</code></span>
+                <details class="group mt-2 text-[11px] text-zinc-400">
+                  <summary class="cursor-pointer select-none hover:text-zinc-200 transition list-none flex items-center gap-1.5">
+                    <i class="fa-solid fa-circle-question text-zinc-500 group-open:hidden"></i>
+                    <span class="group-open:hidden">Como funciona o caminho da imagem?</span>
+                    <span class="hidden group-open:inline">Esconder</span>
+                  </summary>
+                  <div class="mt-2 space-y-2 pl-1 border-l border-zinc-800">
+                    <p><span class="text-zinc-300 font-medium">Se a imagem está neste projeto</span> — use o caminho a partir da raiz do repositório, com a barra normal:</p>
+                    <code class="block bg-zinc-950 border border-zinc-800 rounded-lg px-2 py-1.5 text-[11px] text-purple-300 break-all">Bio and pannel/Fotos/foto-5.png</code>
+                    <p><span class="text-zinc-300 font-medium">Se está no GitHub</span> — clique com o botão direito na imagem → <em>Copiar endereço da imagem</em>. Pode colar o link do jeito que aparecer (com <code class="text-zinc-400">/blob/</code> ou <code class="text-zinc-400">/raw/</code>); o painel ajusta sozinho. Serve em qualquer pasta, não precisa ser <code class="text-zinc-400">Fotos/</code>.</p>
+                    <code class="block bg-zinc-950 border border-zinc-800 rounded-lg px-2 py-1.5 text-[11px] text-purple-300 break-all">https://github.com/<dono>/<repositório>/blob/main/<pasta>/<arquivo></code>
+                    <p class="text-zinc-500">Espaços aparecem como <code class="text-zinc-400">%20</code> — pode deixar assim.</p>
+                  </div>
+                </details>
               </div>
               <div>
                 <label class="block text-xs font-medium text-zinc-400 mb-1">Texto da Badge quando Ao Vivo</label>
@@ -484,6 +497,11 @@
               <div id="wrapCfgBgPatternScale" class="transition-opacity">
                 <label class="block text-xs font-medium text-zinc-400 mb-1">Escala do Padrão <span id="cfgBgPatternScaleVal" class="font-mono text-zinc-500">1.0×</span></label>
                 <input type="range" id="cfgBgPatternScale" min="0.5" max="3" step="0.1" value="1" oninput="dispararAtualizacaoGeral()" class="w-full accent-purple-500 disabled:opacity-40 disabled:cursor-not-allowed">
+              </div>
+              <div id="wrapCfgBgSpeed" class="transition-opacity">
+                <label class="block text-xs font-medium text-zinc-400 mb-1">Velocidade da Animação <span id="cfgBgSpeedVal" class="font-mono text-zinc-500">1.0×</span></label>
+                <input type="range" id="cfgBgSpeed" min="0.25" max="3" step="0.05" value="1" oninput="dispararAtualizacaoGeral()" class="w-full accent-purple-500 disabled:opacity-40 disabled:cursor-not-allowed">
+                <p class="text-[11px] text-zinc-500 mt-1">1× = ritmo original. Acima de 1× anima mais rápido.</p>
               </div>
             </div>
           </div>
@@ -610,6 +628,7 @@
       bgAngle: "135deg",
       bgPatternOpacity: 0.18,
       bgPatternScale: 1,
+      bgSpeed: 1,
       buttonRadius: "rounded-2xl",
       buttonStyle: "glass",
       socials: [
@@ -687,6 +706,8 @@
       const usaAngulo = tipo.startsWith('gradient') || ['stripes', 'stripes-psychedelic', 'aurora', 'aurora-animated', 'isometric', 'concentric'].includes(tipo);
       const usaOpacidade = BG_TYPES_ESCALAVEIS.includes(tipo) || ['aurora', 'aurora-animated', 'dark-velvet', 'lava-lamp', 'topography', 'neon-smoke'].includes(tipo);
       const usaEscala = BG_TYPES_ESCALAVEIS.includes(tipo);
+      // Velocidade só faz sentido nos fundos com camada animada.
+      const usaVelocidade = BG_TYPES_ANIMADOS.includes(tipo);
 
       const c2 = g('cfgBgColor2');
       if (c2) c2.disabled = !usaSegundaCor;
@@ -707,6 +728,11 @@
       if (esc) esc.disabled = !usaEscala;
       const wes = g('wrapCfgBgPatternScale');
       if (wes) wes.classList.toggle('opacity-40', !usaEscala);
+
+      const vel = g('cfgBgSpeed');
+      if (vel) vel.disabled = !usaVelocidade;
+      const wv = g('wrapCfgBgSpeed');
+      if (wv) wv.classList.toggle('opacity-40', !usaVelocidade);
     }
 
     function dispararAtualizacaoGeral() {
@@ -743,6 +769,10 @@
         appConfig.bgPatternScale = sanearEscala(g('cfgBgPatternScale').value);
         if (g('cfgBgPatternScaleVal')) g('cfgBgPatternScaleVal').innerText = appConfig.bgPatternScale.toFixed(1) + '×';
       }
+      if (g('cfgBgSpeed')) {
+        appConfig.bgSpeed = sanearVelocidade(g('cfgBgSpeed').value);
+        if (g('cfgBgSpeedVal')) g('cfgBgSpeedVal').innerText = appConfig.bgSpeed.toFixed(2).replace(/\.?0+$/, '') + '×';
+      }
       atualizarEstadoControlesFundo();
       if (g('cfgButtonRadius')) appConfig.buttonRadius = g('cfgButtonRadius').value;
       if (g('cfgButtonStyle')) appConfig.buttonStyle = g('cfgButtonStyle').value;
@@ -757,6 +787,11 @@
       const estiloFundo = gerarEstiloFundo(appConfig);
       if (g('publicPageCanvas')) Object.assign(g('publicPageCanvas').style, estiloFundo);
       if (g('phoneShell')) Object.assign(g('phoneShell').style, estiloFundo);
+      // Custom properties não podem ser aplicadas via Object.assign; precisam de setProperty.
+      ['publicPageCanvas', 'phoneShell'].forEach(id => {
+        const el = g(id);
+        if (el) el.style.setProperty('--bg-speed', sanearVelocidade(appConfig.bgSpeed));
+      });
 
       // Camada animada: precisa ir para as duas superfícies em paralelo com o estilo.
       const camadaFundo = renderizarCamadaDecorativaFundo(appConfig);
@@ -777,7 +812,7 @@
       if (g('pubBio')) g('pubBio').innerText = appConfig.bio || "";
       if (g('prevBio')) g('prevBio').innerText = appConfig.bio || "";
 
-      const avatarSrc = appConfig.avatarUrl || 'Bio and pannel/Fotos/foto-5.png';
+      const avatarSrc = normalizarUrlImagem(appConfig.avatarUrl, 'Bio and pannel/Fotos/foto-5.png');
       if (g('pubAvatarImg')) g('pubAvatarImg').src = avatarSrc;
       if (g('prevAvatarImg')) g('prevAvatarImg').src = avatarSrc;
 
@@ -867,11 +902,44 @@
 
     const BG_SCALE_MIN = 0.5;
     const BG_SCALE_MAX = 3;
+    const BG_SPEED_MIN = 0.25;
+    const BG_SPEED_MAX = 3;
+    const BG_SPEED_DEFAULT = 1;
 
     function sanearEscala(v) {
       const n = parseFloat(v);
       if (!Number.isFinite(n)) return 1;
       return Math.min(BG_SCALE_MAX, Math.max(BG_SCALE_MIN, n));
+    }
+
+    // Multiplicador de velocidade dos fundos animados. 1 = ritmo original (18s);
+    // valores >1 aceleram. Ao contrário da escala, o valor baixo é o útil (2 = 2× mais rápido).
+    function sanearVelocidade(v) {
+      const n = parseFloat(v);
+      if (!Number.isFinite(n)) return BG_SPEED_DEFAULT;
+      return Math.min(BG_SPEED_MAX, Math.max(BG_SPEED_MIN, n));
+    }
+
+    // O GitHub entrega a imagem por três URLs diferentes, mas só uma serve como <img src>:
+// a "blob" aponta para a página HTML do arquivo e o browser tenta renderizar isso como imagem.
+// Convertemos os formatos que colamos colados (blob/blobmain, /raw/, links ?raw=true) para raw.githubusercontent.
+    function normalizarUrlImagem(url, fallback) {
+      const v = (url || '').trim();
+      if (!v) return fallback;
+      // github.com/<dono>/<repo>/blob/<ref>/<caminho>  ->  raw.githubusercontent.com/<dono>/<repo>/<ref>/<caminho>
+      const blob = v.match(/^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/([^/]+)\/(.+)$/i);
+      if (blob) {
+        const [, dono, repo, ref, ...resto] = blob;
+        return `https://raw.githubusercontent.com/${dono}/${repo}/${ref}/${resto.join('/')}`;
+      }
+      // github.com/<dono>/<repo>/raw/<ref>/<caminho>
+      const raw = v.match(/^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/raw\/([^/]+)\/(.+)$/i);
+      if (raw) {
+        const [, dono, repo, ref, ...resto] = raw;
+        return `https://raw.githubusercontent.com/${dono}/${repo}/${ref}/${resto.join('/')}`;
+      }
+      // Qualquer outra URL (raw.githubusercontent, CDN, site próprio) passa direto.
+      return v;
     }
 
     // Normaliza para #rrggbb: as cores são interpoladas tanto em CSS quanto dentro de
@@ -1066,7 +1134,7 @@
       50%  { transform: translate(6%, -8%) scale(1.15); }
       100% { transform: translate(-7%, 6%) scale(0.95); }
     }
-    .bg-anim-layers { position: absolute; inset: 0; }
+    .bg-anim-layers { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
     .bg-anim-blob {
       position: absolute; filter: blur(80px); mix-blend-mode: screen;
       opacity: 0.75; will-change: transform, border-radius;
@@ -1077,9 +1145,9 @@
       50%  { transform: translate(8%, 6%) scale(1.2); }
       100% { transform: translate(-6%, -5%) scale(0.9); }
     }
-    .bg-anim-flutua { animation: flutuar 18s ease-in-out infinite alternate; }
-    .bg-anim-flutua:nth-child(2n) { animation-duration: 22s; animation-direction: alternate-reverse; }
-    .bg-anim-flutua:nth-child(3n) { animation-duration: 26s; }`;
+    .bg-anim-flutua { animation: flutuar calc(18s / var(--bg-speed, 1)) ease-in-out infinite alternate; }
+    .bg-anim-flutua:nth-child(2n) { animation-duration: calc(22s / var(--bg-speed, 1)); animation-direction: alternate-reverse; }
+    .bg-anim-flutua:nth-child(3n) { animation-duration: calc(26s / var(--bg-speed, 1)); }`;
 
     function renderizarCamadaDecorativaFundo(cfg) {
       const c = cfg || {};
@@ -1185,6 +1253,25 @@
       }
     }
 
+    // Estilo de botão em CSS puro (para o HTML exportado). Espelha getEstiloBotaoClasses
+    // para que o index.html gerado respeite os mesmos controles do painel.
+    const BOTAO_RAIO_PX = { "rounded-full": "9999px", "rounded-3xl": "24px", "rounded-2xl": "16px", "rounded-xl": "12px", "rounded-lg": "8px", "rounded-md": "6px" };
+
+    function getEstiloBotaoInline(isHighlight) {
+      const raio = BOTAO_RAIO_PX[appConfig.buttonRadius] || "16px";
+      const estilo = appConfig.buttonStyle || "glass";
+      const borda = isHighlight ? `2px solid ${appConfig.primaryColor || '#9146ff'}` : "1px solid #27272a";
+      let bg, cor, sombra;
+      if (estilo === 'solid')      { bg = isHighlight ? appConfig.primaryColor : "#27272a"; cor = "#fff"; sombra = "0 1px 3px rgba(0,0,0,.5)"; }
+      else if (estilo === 'outline'){ bg = "transparent";            cor = isHighlight ? "#c4b5fd" : "#d4d4d8"; sombra = "none"; }
+      else if (estilo === 'neon')    { bg = "#000";                  cor = "#fff"; sombra = isHighlight ? `0 0 20px ${appConfig.primaryColor || '#9146ff'}` : "none"; }
+      else                           { bg = isHighlight ? "rgba(60,30,120,.5)" : "rgba(24,24,27,.72)"; cor = isHighlight ? "#fff" : "#f4f4f5"; sombra = "0 10px 15px -3px rgba(0,0,0,.4)"; }
+      // Vidro só faz sentido sobre um fundo com imagem/cor; com fundo sólido não veria nada.
+      const vidro = (estilo === 'glass' && appConfig.bgType && appConfig.bgType !== 'solid')
+        ? "backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);" : "";
+      return `border-radius: ${raio}; background: ${bg}; border: ${borda}; color: ${cor}; box-shadow: ${sombra}; ${vidro}`;
+    }
+
     function getEstiloBotaoClasses(isHighlight, isLiveTwitch, isMockup = false) {
       const radius = appConfig.buttonRadius || "rounded-2xl";
       const style = appConfig.buttonStyle || "glass";
@@ -1200,9 +1287,11 @@
       else base += `border hover:scale-[1.015] active:scale-[0.99] `;
 
       if (style === 'glass') {
-        base += isHighlight 
-          ? 'bg-purple-950/40 border-purple-500 text-white shadow-xl shadow-purple-900/30' 
-          : 'bg-[#18181b]/70 hover:bg-[#202025]/90 border-zinc-800/80 hover:border-purple-500/40 text-zinc-100 shadow-lg';
+        // backdrop-blur só compensa sobre fundo com cor/imagem; com 'solid' não veria nada.
+        const vidro = (appConfig.bgType && appConfig.bgType !== 'solid') ? 'backdrop-blur-[14px] ' : '';
+        base += isHighlight
+          ? `${vidro}bg-purple-950/40 border-purple-500 text-white shadow-xl shadow-purple-900/30`
+          : `${vidro}bg-[#18181b]/70 hover:bg-[#202025]/90 border-zinc-800/80 hover:border-purple-500/40 text-zinc-100 shadow-lg`;
       } else if (style === 'solid') {
         base += isHighlight 
           ? 'bg-purple-600 border-purple-400 text-white shadow-lg' 
@@ -1248,7 +1337,7 @@
 
         const temImagem = !!(item.imageUrl && item.imageUrl.trim());
         const posicaoImg = getItemImagePosition(item);
-        const imgSrc = escapeHtml(item.imageUrl || '');
+        const imgSrc = escapeHtml(normalizarUrlImagem(item.imageUrl, ''));
 
         const iconeBoxClasses = `w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center text-lg ${linkIsLive ? 'bg-red-600 text-white' : (item.highlight ? 'bg-purple-600 text-white' : 'bg-zinc-800/80 text-purple-400 group-hover:text-purple-300 group-hover:bg-purple-600/30')} transition duration-200`;
         const iconeBoxMock = `w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center text-xs ${linkIsLive ? 'bg-red-600 text-white' : (item.highlight ? 'bg-purple-600 text-white' : 'bg-zinc-800 text-purple-400')}`;
@@ -1372,7 +1461,11 @@
       s('cfgBgAngle', appConfig.bgAngle || "135deg");
       s('cfgBgPatternOpacity', appConfig.bgPatternOpacity != null ? appConfig.bgPatternOpacity : 0.18);
       s('cfgBgPatternScale', sanearEscala(appConfig.bgPatternScale));
-      if (g('cfgBgPatternScaleVal')) g('cfgBgPatternScaleVal').innerText = sanearEscala(appConfig.bgPatternScale).toFixed(1) + '×';
+      const escalaValEl = document.getElementById('cfgBgPatternScaleVal');
+      if (escalaValEl) escalaValEl.innerText = sanearEscala(appConfig.bgPatternScale).toFixed(1) + '×';
+      s('cfgBgSpeed', sanearVelocidade(appConfig.bgSpeed));
+      const velValEl = document.getElementById('cfgBgSpeedVal');
+      if (velValEl) velValEl.innerText = sanearVelocidade(appConfig.bgSpeed).toFixed(2).replace(/\.?0+$/, '') + '×';
       if (document.getElementById('cfgBgPatternOpacityVal')) document.getElementById('cfgBgPatternOpacityVal').innerText = Number(appConfig.bgPatternOpacity != null ? appConfig.bgPatternOpacity : 0.18).toFixed(2);
       atualizarEstadoControlesFundo();
       s('cfgButtonRadius', appConfig.buttonRadius || "rounded-2xl");
@@ -1399,6 +1492,10 @@
               ${renderizarIcone(soc.icon)}
             </button>
             <input type="text" value="${escapeHtml(soc.name)}" oninput="atualizarRedeCampo(${idx}, 'name', this.value)" class="min-w-0 flex-1 bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs font-bold text-zinc-200 focus:outline-none focus:border-purple-500" placeholder="Nome da rede">
+            <div class="flex items-center gap-0.5 flex-shrink-0">
+              <button onclick="moverSocial(${idx}, -1)" title="Mover para cima" ${idx === 0 ? 'disabled class="opacity-30 p-1.5 text-zinc-500"' : 'class="p-1.5 text-zinc-400 hover:text-white rounded hover:bg-zinc-800 transition"'}><i class="fa-solid fa-arrow-up text-xs"></i></button>
+              <button onclick="moverSocial(${idx}, 1)" title="Mover para baixo" ${idx === appConfig.socials.length - 1 ? 'disabled class="opacity-30 p-1.5 text-zinc-500"' : 'class="p-1.5 text-zinc-400 hover:text-white rounded hover:bg-zinc-800 transition"'}><i class="fa-solid fa-arrow-down text-xs"></i></button>
+            </div>
             <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
               <input type="checkbox" ${soc.active ? 'checked' : ''} onchange="toggleSocialStatus(${idx}, this.checked)" class="sr-only peer">
               <div class="w-7 h-4 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-purple-600"></div>
@@ -1523,6 +1620,16 @@
       dispararAtualizacaoGeral();
     }
 
+    function moverSocial(index, direcao) {
+      const novoIndex = index + direcao;
+      if (novoIndex < 0 || novoIndex >= appConfig.socials.length) return;
+      const item = appConfig.socials.splice(index, 1)[0];
+      appConfig.socials.splice(novoIndex, 0, item);
+      salvarConfiguracao();
+      renderizarListaSocialAdmin();
+      dispararAtualizacaoGeral();
+    }
+
     function excluirLink(index) {
       if (confirm("Remover este link?")) {
         appConfig.links.splice(index, 1);
@@ -1544,6 +1651,7 @@
       if (!Number.isFinite(op)) op = DEFAULT_CONFIG.bgPatternOpacity;
       c.bgPatternOpacity = Math.min(0.4, Math.max(0.05, op));
       c.bgPatternScale = sanearEscala(c.bgPatternScale);
+      c.bgSpeed = sanearVelocidade(c.bgSpeed);
 
       (c.links || []).forEach(item => {
         if (!('glowColor' in item)) item.glowColor = "";
@@ -1822,9 +1930,9 @@
         const fit = getItemImageFit(l);
         let midiaHtml;
         if (temImg && (posImg === 'top' || posImg === 'bottom')) {
-          midiaHtml = `<img src="${escapeHtml(l.imageUrl)}" alt="" loading="lazy" onerror="this.style.display='none'" style="${fit === 'contain' ? getImgEstiloBannerContido() : getImgEstiloBanner(150)}">`;
+          midiaHtml = `<img src="${escapeHtml(normalizarUrlImagem(l.imageUrl, ''))}" alt="" loading="lazy" onerror="this.style.display='none'" style="${fit === 'contain' ? getImgEstiloBannerContido() : getImgEstiloBanner(150)}">`;
         } else if (temImg && posImg === 'left') {
-          midiaHtml = `<img src="${escapeHtml(l.imageUrl)}" alt="" loading="lazy" onerror="this.style.display='none'" style="${getImgEstiloThumb(l)}">`;
+          midiaHtml = `<img src="${escapeHtml(normalizarUrlImagem(l.imageUrl, ''))}" alt="" loading="lazy" onerror="this.style.display='none'" style="${getImgEstiloThumb(l)}">`;
         } else {
           midiaHtml = `<div id="${isTwitch ? 'twitchIconBox' : ''}" style="width: 40px; height: 40px; border-radius: 12px; background: ${isHl ? glowCor : '#27272a'}; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">${renderizarIcone(l.icon)}</div>`;
         }
@@ -1856,7 +1964,7 @@
           : '';
 
         linksHtml += `
-      <a id="${isTwitch ? 'twitchMainBtn' : ''}" href="${l.url}" target="_blank" rel="noopener noreferrer" class="${isHl ? 'glow-item' : ''}" style="${glowVar}display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: ${bg}; border: 1px solid ${border}; border-radius: 16px; text-decoration: none; box-shadow: ${shadow}; transition: transform 0.2s, border-color 0.2s; ${cardFlex}" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+      <a id="${isTwitch ? 'twitchMainBtn' : ''}" href="${l.url}" target="_blank" rel="noopener noreferrer" class="${isHl ? 'glow-item' : ''}" style="${glowVar}display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; ${getEstiloBotaoInline(isHl)} text-decoration: none; transition: transform 0.2s, border-color 0.2s; ${cardFlex}" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
         ${conteudo}
       </a>`;
       });
@@ -1872,7 +1980,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { ${estiloFundoParaCss(gerarEstiloFundo(cfg))} color: #fff; font-family: 'Inter', sans-serif; display: flex; justify-content: center; min-height: 100vh; padding: 30px 16px; }
+    body { ${estiloFundoParaCss(gerarEstiloFundo(cfg))} color: #fff; font-family: 'Inter', sans-serif; display: flex; justify-content: center; min-height: 100vh; padding: 30px 16px; overflow-x: hidden; }
     .card { width: 100%; max-width: 520px; display: flex; flex-direction: column; align-items: center; text-align: center; }
     .avatar { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 3px solid ${cfg.primaryColor}; box-shadow: 0 0 25px rgba(145, 70, 255, 0.4); margin-bottom: 16px; }
     @keyframes liveGlow { 0%, 100% { box-shadow: 0 0 16px rgba(239, 68, 68, 0.6); } 50% { box-shadow: 0 0 30px rgba(239, 68, 68, 0.95); } }
@@ -1882,7 +1990,7 @@
       50% { box-shadow: 0 0 28px rgba(var(--glow-rgb, 145, 70, 255), 0.8), inset 0 0 15px rgba(var(--glow-rgb, 145, 70, 255), 0.4); }
     }
     .glow-item { animation: itemGlow 2.5s infinite ease-in-out; }
-    body { position: relative; }
+    body { position: relative; overflow-x: hidden; --bg-speed: ${sanearVelocidade(cfg.bgSpeed)}; }
     .card { position: relative; z-index: 1; }
     [data-bg-layer] { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
     [data-bg-layer]:empty { display: none; }${cssAnimacaoFundo}
@@ -1898,7 +2006,7 @@
       </a>
     </div>
 
-    <img src="${cfg.avatarUrl}" alt="Avatar" onerror="this.onerror=null; this.src='https://placehold.co/110x110/18181b/9146FF?text=OM'" class="avatar">
+    <img src="${normalizarUrlImagem(cfg.avatarUrl, 'Bio and pannel/Fotos/foto-5.png')}" alt="Avatar" onerror="this.onerror=null; this.src='https://placehold.co/110x110/18181b/9146FF?text=OM'" class="avatar">
     <h1 style="font-size: 22px; font-weight: 800;">${escapeHtml(cfg.displayName)}</h1>
     <p style="font-size: 14px; font-weight: 600; color: ${cfg.primaryColor}; margin-top: 4px;">${escapeHtml(cfg.username)}</p>
     <p style="font-size: 13px; color: #a1a1aa; max-width: 420px; margin: 12px 0 20px 0; line-height: 1.5; white-space: pre-line;">${escapeHtml(cfg.bio)}</p>

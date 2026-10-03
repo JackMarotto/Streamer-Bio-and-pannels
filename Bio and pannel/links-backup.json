@@ -1,0 +1,162 @@
+{
+  "displayName": "oMarotto",
+  "username": "@omarotto",
+  "twitchUsername": "omarotto",
+  "autoDetectLive": true,
+  "avatarUrl": "https://github.com/JackMarotto/creator-links/blob/main/Bio%20and%20pannel/Fotos/foto-5.png",
+  "bio": "Criador de conteúdo, Gamer & Desenvolvedor de Widgets.\nAcompanhe minhas lives e confira os projetos nos links abaixo!",
+  "statusTag": "🔴 AO VIVO NA TWITCH",
+  "primaryColor": "#9146ff",
+  "bgColor": "#0e0e10",
+  "bgType": "aurora-animated",
+  "bgColor2": "#ff0000",
+  "bgAngle": "135deg",
+  "bgPatternOpacity": 0.4,
+  "bgPatternScale": 1.5,
+  "bgSpeed": 3,
+  "buttonRadius": "rounded-full",
+  "buttonStyle": "glass",
+  "socials": [
+    {
+      "id": "s_twitch",
+      "name": "Twitch",
+      "icon": "fa-brands fa-twitch",
+      "url": "https://twitch.tv/omarotto",
+      "active": true
+    },
+    {
+      "id": "s_youtube",
+      "name": "YouTube",
+      "icon": "fa-brands fa-youtube",
+      "url": "https://youtube.com/@omarotto",
+      "active": true
+    },
+    {
+      "id": "s_discord",
+      "name": "Discord",
+      "icon": "fa-brands fa-discord",
+      "url": "https://discord.gg",
+      "active": true
+    },
+    {
+      "id": "s_x",
+      "name": "Twitter / X",
+      "icon": "fa-brands fa-x-twitter",
+      "url": "https://x.com/omarotto",
+      "active": true
+    },
+    {
+      "id": "s_instagram",
+      "name": "Instagram",
+      "icon": "fa-brands fa-instagram",
+      "url": "https://instagram.com/omarotto",
+      "active": true
+    },
+    {
+      "id": "s_tiktok",
+      "name": "TikTok",
+      "icon": "fa-brands fa-tiktok",
+      "url": "https://tiktok.com/@omarotto",
+      "active": false
+    },
+    {
+      "id": "social_1791043709792",
+      "name": "Kick",
+      "icon": "brand-kick",
+      "url": "https://kick.com/omarotto",
+      "active": true
+    }
+  ],
+  "links": [
+    {
+      "id": "link_twitch_main",
+      "title": "Canal de Lives na Twitch",
+      "subtitle": "Transmissões quase todos os dias às 19h",
+      "url": "https://twitch.tv/omarotto",
+      "icon": "fa-brands fa-twitch",
+      "highlight": true,
+      "badge": "",
+      "active": true,
+      "glowColor": "",
+      "imageUrl": "",
+      "imagePosition": "left",
+      "imageSize": "md",
+      "imageFit": "cover"
+    },
+    {
+      "id": "link_1791045432553",
+      "title": "Canal de Lives na Kick",
+      "subtitle": "Breve descrição do destino",
+      "url": "https://kick.com/omarotto",
+      "icon": "brand-kick",
+      "highlight": true,
+      "badge": "",
+      "active": true,
+      "glowColor": "#30c606",
+      "imageUrl": "",
+      "imagePosition": "left",
+      "imageSize": "md",
+      "imageFit": "cover"
+    },
+    {
+      "id": "link_discord",
+      "title": "Comunidade no Discord",
+      "subtitle": "Participe de sorteios, bate-papo e novidades",
+      "url": "https://discord.gg",
+      "icon": "fa-brands fa-discord",
+      "highlight": false,
+      "badge": "VIP",
+      "active": true,
+      "glowColor": "",
+      "imageUrl": "",
+      "imagePosition": "left",
+      "imageSize": "md",
+      "imageFit": "cover"
+    },
+    {
+      "id": "link_widgets",
+      "title": "Widgets Gratuitos para OBS",
+      "subtitle": "Widgets de jogo atual, metas e avisos de live",
+      "url": "https://github.com/jackmarotto/Streamer-Bio-and-pannels",
+      "icon": "fa-solid fa-gamepad",
+      "highlight": false,
+      "badge": "Novo",
+      "active": true,
+      "glowColor": "",
+      "imageUrl": "",
+      "imagePosition": "left",
+      "imageSize": "md",
+      "imageFit": "cover"
+    },
+    {
+      "id": "link_setup",
+      "title": "Setup Gamer & Equipamentos",
+      "subtitle": "Periféricos, microfone e peças do PC recomendadas",
+      "url": "https://amazon.com.br",
+      "icon": "fa-solid fa-headset",
+      "highlight": false,
+      "badge": "",
+      "active": true,
+      "glowColor": "",
+      "imageUrl": "",
+      "imagePosition": "left",
+      "imageSize": "md",
+      "imageFit": "cover"
+    },
+    {
+      "id": "link_pix",
+      "title": "Mande uma mensagem / Pix",
+      "subtitle": "Apoie a produção de conteúdo do canal",
+      "url": "https://tipa.ai",
+      "icon": "fa-solid fa-qrcode",
+      "highlight": false,
+      "badge": "Apoio",
+      "active": true,
+      "glowColor": "",
+      "imageUrl": "",
+      "imagePosition": "left",
+      "imageSize": "md",
+      "imageFit": "cover"
+    }
+  ]
+}
